@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU Architecture Mastery - Roadmap & Question Bank</title>
+<style>
+:root{--bg:#0a0c10;--bg2:#111418;--bg3:#181d24;--bg4:#1e2530;--border:#252e3d;--border2:#2e3d52;--text:#dde4f0;--muted:#6b7a99;--dim:#3d4d66;--cpu:#f472b6;--blue:#60a5fa;--green:#4ade80;--amber:#fbbf24;--red:#f87171;--sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Code',monospace}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:32px 24px 24px;text-align:center}
+.hero-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--cpu);text-transform:uppercase;margin-bottom:8px}
+.hero h1{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--text);margin-bottom:6px}
+.hero-sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:20px}
+.stat{text-align:center}.stat-val{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--cpu)}
+.stat-label{font-size:11px;color:var(--muted);letter-spacing:.05em}
+.overall-bar{max-width:480px;margin:0 auto 8px;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.overall-fill{height:100%;background:linear-gradient(90deg,#be185d,var(--cpu));border-radius:4px;transition:width .5s}
+.overall-label{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.gh-note{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;max-width:620px;margin:16px auto 0;font-size:12px;color:var(--muted)}
+.gh-note b{color:var(--text)}
+.sources-note{background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.2);border-radius:8px;padding:8px 16px;max-width:620px;margin:10px auto 0;font-size:11px;color:var(--muted);font-family:var(--mono)}
+.phase-nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.phase-btn{font-family:var(--mono);font-size:11px;padding:5px 14px;border:1px solid var(--border2);border-radius:4px;background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s}
+.phase-btn:hover{color:var(--text);border-color:var(--muted)}
+.phase-btn.active{color:var(--cpu);border-color:var(--cpu);background:rgba(244,114,182,.07)}
+.module-nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:6px;flex-wrap:wrap}
+.mod-btn{font-family:var(--mono);font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--dim);cursor:pointer;transition:all .15s}
+.mod-btn:hover{color:var(--muted);border-color:var(--border2)}
+.mod-btn.done{border-color:var(--green);color:var(--green)}
+.mod-btn.partial{border-color:var(--amber);color:var(--amber)}
+.content{max-width:1100px;margin:0 auto;padding:24px}
+.phase-header{font-family:var(--mono);font-size:11px;letter-spacing:.15em;color:var(--cpu);text-transform:uppercase;padding:16px 0 8px;margin-top:8px}
+.module{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.module-head{padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;user-select:none;transition:background .15s}
+.module-head:hover{background:var(--bg3)}
+.module-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--dim);width:32px;flex-shrink:0}
+.module-icon{font-size:20px;flex-shrink:0}
+.module-info{flex:1}.module-title{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text)}
+.module-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.module-right{text-align:right;flex-shrink:0}
+.mod-count{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.mod-badge{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:3px;margin-top:3px;display:inline-block}
+.badge-ns{background:rgba(61,77,102,.4);color:var(--dim)}
+.badge-ip{background:rgba(251,191,36,.1);color:var(--amber)}
+.badge-done{background:rgba(74,222,128,.1);color:var(--green)}
+.module-chevron{color:var(--dim);font-size:11px;transition:transform .2s;flex-shrink:0}
+.module.open .module-chevron{transform:rotate(90deg)}
+.mod-bar{height:3px;background:var(--bg4);margin:0 20px}
+.mod-bar-fill{height:100%;background:var(--cpu);transition:width .4s}
+.module.open .mod-bar{display:none}
+.module-body{display:none;border-top:1px solid var(--border)}
+.module.open .module-body{display:block}
+.q-table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg3)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th:first-child{width:42px;text-align:center}th:nth-child(2){width:44px}
+th:nth-child(4){width:80px}th:nth-child(5){width:90px}th:last-child{width:80px}
+tbody tr{border-bottom:1px solid rgba(37,46,61,.6);transition:background .1s;cursor:pointer}
+tbody tr:hover{background:rgba(244,114,182,.03)}
+tbody tr.checked{opacity:.45}tbody tr:last-child{border-bottom:none}
+td{padding:9px 12px;font-size:13px;vertical-align:middle}td:first-child{text-align:center}
+.cb{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:3px;display:inline-flex;align-items:center;justify-content:center}
+tr.checked .cb{background:var(--cpu);border-color:var(--cpu)}
+.cb-check{display:none;font-size:10px;font-weight:800;color:var(--bg)}
+tr.checked .cb-check{display:block}
+.q-num{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.q-text{color:var(--text);line-height:1.5}tr.checked .q-text{text-decoration:line-through;color:var(--dim)}
+.tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;font-weight:600;letter-spacing:.04em}
+.tag-theory{background:rgba(96,165,250,.12);color:var(--blue);border:1px solid rgba(96,165,250,.25)}
+.tag-code{background:rgba(244,114,182,.12);color:var(--cpu);border:1px solid rgba(244,114,182,.25)}
+.tag-debug{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.25)}
+.tag-design{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+.diff{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;font-weight:700;letter-spacing:.04em}
+.diff-B{background:rgba(74,222,128,.1);color:var(--green)}
+.diff-I{background:rgba(251,191,36,.1);color:var(--amber)}
+.diff-A{background:rgba(248,113,113,.1);color:var(--red)}
+.issue-input{width:52px;font-family:var(--mono);font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;color:var(--muted);padding:2px 5px;outline:none}
+.issue-input:focus{border-color:var(--cpu);color:var(--text)}
+.issue-open{display:block;font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:none;margin-top:2px}
+.issue-open.active{color:var(--blue)}.issue-open.active:hover{text-decoration:underline}
+td.issue-cell{font-size:11px}
+.mod-stats{display:flex;gap:20px;padding:12px 20px;background:var(--bg3);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.ms{color:var(--muted)}.ms span{font-family:var(--mono);color:var(--cpu);font-weight:700}
+.mod-prog-bar{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:6px;align-self:center;min-width:80px}
+.mod-prog-fill{height:100%;background:var(--cpu);border-radius:3px;transition:width .4s}
+.footer{text-align:center;padding:32px;font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--border);margin-top:32px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-tag">// complete mastery path</div>
+  <h1>CPU ARCHITECTURE MASTERY</h1>
+  <div class="hero-sub">ISA &rarr; PIPELINES &rarr; CACHES &rarr; OOO &rarr; SIMD &rarr; SECURITY &rarr; SILICON &middot; 30 MODULES</div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val" id="s-modules">30</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-val" id="s-total">0</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-val">3</div><div class="stat-label">Phases</div></div>
+    <div class="stat"><div class="stat-val">&infin;</div><div class="stat-label">Perf experiments</div></div>
+  </div>
+  <div style="color:var(--muted);font-size:12px;margin-bottom:16px">
+    Foundations &mdash; ISA &amp; Microarchitecture &nbsp;&middot;&nbsp; Intermediate &mdash; Memory &amp; Parallelism &nbsp;&middot;&nbsp; Advanced &mdash; Security, Silicon &amp; Modern CPU Design
+  </div>
+  <div class="overall-bar"><div class="overall-fill" id="overall-fill" style="width:0%"></div></div>
+  <div class="overall-label">
+    <b id="done-count">0</b> / <b id="total-count">0</b> questions done &nbsp;
+    <b id="pct-label">0%</b> overall &nbsp;
+    <b id="mod-done">0</b> / <b id="mod-total">30</b> modules complete
+  </div>
+  <div class="sources-note">Sources: P&H &middot; H&P &middot; Intel_SDM &middot; ARM_ARM &middot; RISC-V_Spec &middot; Agner_Fog &middot; intel_optimization_manual</div>
+  <div class="gh-note"><b>GitHub sync:</b> Track implementations in assembly, simulators, and perf experiments alongside this question bank.</div>
+</div>
+<nav class="phase-nav">
+  <button class="phase-btn active" onclick="filterPhase(0)">All phases</button>
+  <button class="phase-btn" onclick="filterPhase(1)">Phase 01 &middot; ISA &amp; Microarchitecture Foundations</button>
+  <button class="phase-btn" onclick="filterPhase(2)">Phase 02 &middot; Memory, Parallelism &amp; Compilers</button>
+  <button class="phase-btn" onclick="filterPhase(3)">Phase 03 &middot; Advanced, Security &amp; Modern CPUs</button>
+</nav>
+<div class="module-nav" id="mod-nav"></div>
+<div class="content" id="content"></div>
+<div class="footer">CPU MASTERY &middot; 30 MODULES &middot; FETCH. DECODE. EXECUTE. RETIRE.</div>
+<script>
+const MODULES = [
+{id:'m01',phase:1,num:'01',icon:'📐',title:'ISA Fundamentals — RISC vs CISC',desc:'Instruction set design, RISC-V, ARM, x86 ISA taxonomy, addressing modes, encoding, ABI.',qs:[
+['What is an ISA (Instruction Set Architecture)? What contract does it define between hardware and software?','T','B'],
+['What are the fundamental differences between RISC and CISC philosophies? Give three concrete examples of each difference using RISC-V vs x86.','T','B'],
+['What are the main instruction categories in any ISA: arithmetic/logic, load/store, branch, call/return, and system instructions?','T','B'],
+['What is an addressing mode? Describe all addressing modes in x86-64: immediate, register, direct, register-indirect, base+displacement, base+index+scale+displacement.','T','B'],
+['What is instruction encoding? How does a 32-bit RISC-V instruction pack opcode, registers, and immediates into fixed-width fields? What are the six RISC-V format types (R, I, S, B, U, J)?','T','B'],
+['What is the ABI (Application Binary Interface)? What does it define: calling convention, register usage, stack layout, data alignment, and system call interface?','T','B'],
+['What is the x86-64 System V ABI calling convention? Which registers hold the first 6 integer arguments, which are callee-saved, and how is the stack aligned?','T','B'],
+['What is the ARM64 AAPCS64 calling convention? Which registers are argument registers, link register, frame pointer, and which are callee-saved?','T','B'],
+['What is sign extension vs zero extension? Why does it matter when moving an 8-bit value into a 64-bit register and how do MOVSX and MOVZX differ?','T','B'],
+['Compare RISC-V 32-bit fixed encoding vs Thumb-2 variable 16/32-bit encoding vs x86 variable 1-15 byte encoding in terms of code density, decoder complexity, and branch range.','T','I'],
+['Disassemble this x86-64 machine code: 48 89 f8 48 83 c0 01 c3. Identify the REX prefix, opcode, ModRM byte, and what the function computes.','C','B'],
+['Write a RISC-V assembly strlen: iterate through bytes, compare to zero, return the count. Annotate each instruction with its ISA format type.','C','B'],
+['Write x86-64 assembly for a loop that computes the dot product of two float arrays using SSE scalar instructions. Identify caller-saved vs callee-saved registers.','C','I'],
+['Write an ARM64 assembly memcpy using ldp/stp for 16-byte chunks. Handle tail bytes separately. Explain the advantage of ldp over two separate ldr instructions.','C','I'],
+['Compile a C function and inspect its disassembly with objdump -d. Identify: function prologue/epilogue, stack frame setup, argument passing, and return value.','C','B'],
+['Write a RISC-V assembly program demonstrating all six instruction formats (R, I, S, B, U, J) with one example of each and show the bit-level encoding.','C','I'],
+['What is the difference between a load-store ISA and a register-memory ISA? Give a concrete example of adding two memory values in RISC-V vs x86.','T','B'],
+['What is a delay slot in MIPS? Why do modern ISAs (ARM, RISC-V) eliminate it and what branch prediction technique replaces it?','T','I'],
+['Compare condition code approach (x86 FLAGS), predicated execution (ARM NZCV), and branch-only approach (RISC-V) for conditional operations.','T','I'],
+['Design a minimal ISA for an embedded 16-bit microcontroller: specify register file size, instruction width, addressing modes, and justify every choice.','T','I']
+]},
+{id:'m02',phase:1,num:'02',icon:'🔄',title:'Classic 5-Stage Pipeline',desc:'IF, ID, EX, MEM, WB stages, data hazards, control hazards, forwarding, stalls, pipeline diagram.',qs:[
+['Describe the classic 5-stage RISC pipeline: IF, ID, EX, MEM, WB. What happens in each stage for a load instruction?','T','B'],
+['What is a data hazard? Give an example of a RAW hazard between two adjacent instructions and show the stall cycles introduced without forwarding.','T','B'],
+['What is pipeline forwarding (bypassing)? Show how it eliminates the stall for an EX-EX hazard and a MEM-EX hazard.','T','B'],
+['What is a load-use hazard? Why can forwarding not eliminate it completely and why is exactly one stall cycle required?','T','B'],
+['What is a control hazard? How many cycles does a branch penalty cost in the 5-stage pipeline when the branch is resolved in EX?','T','B'],
+['What is a structural hazard? Describe a case where two stages compete for the same hardware resource simultaneously.','T','B'],
+['What is the difference between a flushed instruction and a stalled instruction? What signal inserts a bubble (NOP) vs freezes a stage?','T','I'],
+['What is pipeline CPI? Write the formula showing how stall cycles from data hazards and branch mispredictions contribute to actual CPI.','T','B'],
+['What is a WAR (write-after-read) and WAW (write-after-write) hazard? In a classic in-order 5-stage pipeline, can they actually occur?','T','I'],
+['What is the purpose of the ID/EX, EX/MEM, and MEM/WB pipeline registers? Why must they be registers (not wires)?','T','B'],
+['Simulate 10 instructions through a 5-stage pipeline with forwarding enabled. Show the pipeline diagram and identify all stalls.','C','B'],
+['Implement a 5-stage pipeline simulator in Python that outputs a pipeline diagram showing each instruction in each stage, forwarding paths, and stall bubbles.','C','I'],
+['Reorder these 5 instructions to minimize stall cycles while preserving semantics: LOAD R1, LOAD R2, ADD R3 R1 R2, STORE R3, LOAD R4.','C','B'],
+['Write a C function with -O0. Count load-use stall opportunities in the disassembly. Then compile with -O2 and count again. Explain the compiler transformation.','C','I'],
+['Implement hazard detection logic in Verilog for the 5-stage pipeline: detect RAW hazards and generate stall signals for PC and IF/ID registers.','C','A'],
+['Implement the forwarding unit in Verilog: define the four forwarding paths and the mux select logic for ALU input A and B.','C','A'],
+['What is the branch prediction default in the classic pipeline: predict-not-taken or predict-taken? What is the penalty for misprediction in each case?','T','B'],
+['Draw a block diagram showing how the hazard detection unit and forwarding unit interact and what signals each produces.','T','I'],
+['What is the difference between early branch resolution (resolved in ID stage) and late branch resolution (resolved in EX)? What is the penalty in each case?','T','I'],
+['Why did RISC-V choose not to have a branch delay slot even though early RISC ISAs had one? What does this say about ISA evolution?','T','I']
+]},
+{id:'m03',phase:1,num:'03',icon:'🌿',title:'Branch Prediction',desc:'Static/dynamic prediction, bimodal, 2-level, tournament, BTB, RAS, indirect branch, TAGE.',qs:[
+['What is branch prediction and why is it critical? What is the misprediction penalty cost on a modern 20-stage pipeline?','T','B'],
+['What is static branch prediction? Describe predict-always-not-taken, predict-always-taken, and BTFNT heuristics and their typical accuracy.','T','B'],
+['What is a bimodal predictor (1-bit vs 2-bit saturating counter)? Why does the 2-bit predictor outperform the 1-bit predictor for loops?','T','B'],
+['What is a 2-level adaptive predictor? Describe the global history register (GHR), pattern history table (PHT), and how they combine.','T','I'],
+['What is a tournament predictor? How does the Alpha 21264 combine a local and global predictor with a meta-predictor?','T','I'],
+['What is a Branch Target Buffer (BTB)? What does it store and how does it enable fetch of the next instruction before the branch is decoded?','T','I'],
+['What is a Return Address Stack (RAS)? How does it predict function return addresses and what happens on overflow?','T','B'],
+['What is an indirect branch predictor? Why is a simple BTB insufficient for indirect calls (vtable dispatch, switch) and what structures improve accuracy?','T','I'],
+['What is TAGE (Tagged Geometric-history-length predictor)? How do geometric history lengths and tags improve prediction accuracy?','T','A'],
+['What is branch predictor aliasing? How does aliasing corrupt prediction state and what techniques (gshare, gselect) mitigate it?','T','I'],
+['Write a branch predictor simulator: implement bimodal (2-bit), gshare (16-bit GHR XOR PC), and a tournament predictor. Feed a real branch trace and compare accuracy.','C','I'],
+['Use perf stat to measure branch-misses for: a linear search, a binary search, and sorted vs unsorted array sum. Explain the differences.','C','I'],
+['Write C code that intentionally defeats the branch predictor (alternating pattern). Measure CPI degradation. Then restructure to be predictor-friendly.','C','I'],
+['Write two loop versions: one with a random if-branch, one with a branchless CMOV equivalent. Benchmark and explain the speedup.','C','I'],
+['Simulate the Alpha 21264 tournament predictor: local history table, local PHT, global history, global PHT, and choice PHT. Test on a branch trace file.','C','A'],
+['Use perf record and perf report to profile a real application. Identify the top 3 functions by branch-misses and propose restructuring.','C','I'],
+['What is loop unrolling and how does it reduce branch prediction pressure? What is the trade-off with instruction cache pressure?','T','I'],
+['What is the difference between a predicted-not-taken (fall-through) and predicted-taken branch in terms of fetch efficiency?','T','I'],
+['What is conditional move (CMOV) and how does it eliminate branches? What is the performance cost when the CMOV input is a long-latency load?','T','I'],
+['Design a branch predictor for a 4-wide superscalar that can predict 4 branches per cycle. What structures must be replicated or banked?','T','A']
+]},
+{id:'m04',phase:1,num:'04',icon:'🔀',title:'Out-of-Order Execution',desc:'Tomasulo algorithm, reservation stations, ROB, register renaming, scoreboard, speculative execution.',qs:[
+['What is out-of-order execution? What problem does it solve that forwarding and static scheduling cannot?','T','B'],
+['What is the Tomasulo algorithm? Describe the three main structures: reservation stations, common data bus (CDB), and register result status table.','T','I'],
+['What is a Reorder Buffer (ROB)? Why is it necessary for precise exceptions in an out-of-order processor?','T','I'],
+['What is register renaming? How does it eliminate WAR and WAW false dependencies? Show an example with RAT (Register Alias Table) entries.','T','I'],
+['What is the issue queue (instruction scheduler)? What is the difference between in-order and out-of-order issue?','T','I'],
+['What is the difference between a unified reservation station and distributed reservation stations per execution unit? Give a real processor example of each.','T','I'],
+['What is a load-store queue (LSQ)? How does store-to-load forwarding work within the LSQ before a store commits?','T','I'],
+['What is speculative execution? What happens to instructions already in flight when a branch is mispredicted?','T','I'],
+['What is the difference between physical and architectural registers? How does the physical register file (PRF) enable register renaming?','T','I'],
+['What is the difference between in-order commit and in-order retire? Why must instructions commit in program order even if they executed out of order?','T','B'],
+['Write a Tomasulo algorithm simulator in Python: 3 reservation stations, 4-entry ROB, CDB, 2 execution units (ALU=1 cycle, MUL=3 cycles). Simulate 6 instructions cycle-by-cycle.','C','A'],
+['Write a register renaming simulator: maintain a RAT, free list, and ROB. Process 10 instructions with RAW, WAR, and WAW dependencies. Show renamed register allocation at each step.','C','I'],
+['Use perf stat to measure IPC for a compute-heavy loop with artificial dependencies vs the same loop with dependencies removed. Show the OOO engine filling execution slots.','C','I'],
+['Write two functions: one with a loop-carried dependency chain (add result used by next add) and one with an independent chain. Benchmark both and explain the IPC difference.','C','I'],
+['Write a superscalar issue logic simulator: given a 6-entry instruction window, select up to 2 ready instructions per cycle. Show selections over 5 cycles.','C','A'],
+['Use LLVM MCA to analyze a hot loop kernel. Interpret the throughput, bottleneck port utilization, and critical dependency chain. Propose a rewrite that improves throughput.','C','A'],
+['What is the difference between precise and imprecise exceptions? Why does the ROB enable precise exceptions?','T','I'],
+['What is the wake-up and select process in the scheduler? Describe the two-cycle select latency common in Intel CPUs.','T','A'],
+['What is a memory ordering violation in an OOO processor? When does a load speculatively read from an address that a later-resolved store was writing?','T','A'],
+['Design a 4-wide OOO processor back-end: specify ROB size, reservation station count, physical register file size, and execution unit count. Justify each number.','T','A']
+]},
+{id:'m05',phase:1,num:'05',icon:'⚡',title:'Superscalar & VLIW Architectures',desc:'Superscalar fetch/decode/issue width, in-order vs OOO, VLIW/EPIC, ILP, SMT, issue slot utilization.',qs:[
+['What is a superscalar processor? How does issuing multiple instructions per cycle differ from pipelining?','T','B'],
+['What is ILP (Instruction-Level Parallelism)? What are the limits: true dependencies, control dependencies, memory aliasing, and finite resources?','T','B'],
+['What is fetch width? How does a 4-wide superscalar fetch 4 variable-length x86 instructions per cycle?','T','I'],
+['What is the decode stage in a superscalar? Why is decoding 4 x86 instructions simultaneously harder than 4 RISC-V instructions?','T','I'],
+['What is a VLIW (Very Long Instruction Word) architecture? How does it differ from superscalar in scheduling responsibility?','T','I'],
+['What is EPIC (Explicitly Parallel Instruction Computing)? How does Intel Itanium implement it with bundles, templates, and predication?','T','I'],
+['What is SMT (Simultaneous Multi-Threading)? How does Hyper-Threading implement 2-way SMT on Intel CPUs sharing the ROB and RS?','T','I'],
+['What is fine-grain vs coarse-grain multi-threading? What hardware event motivates switching threads in each model?','T','I'],
+['What is instruction throughput vs latency? Give an example of an instruction with latency=3 and throughput=1/cycle.','T','I'],
+['What is port pressure in a modern superscalar? How does the Skylake 6-port model limit throughput even with no data dependencies?','T','I'],
+['Write a benchmark that saturates all integer ALU execution ports on an Intel CPU. Verify with perf stat that you achieve theoretical max IPC.','C','A'],
+['Write a benchmark that demonstrates SMT benefit: one thread stalls on memory, second thread fills ALU slots. Measure system throughput with/without HT.','C','I'],
+['Use perf to measure uops_dispatched_port for each execution port during a mixed workload. Identify bottleneck ports and rewrite to balance pressure.','C','A'],
+['Write a VLIW program for a 3-slot VLIW simulator (ALU, MUL, LOAD slots) that computes a 4-element dot product. Pack instructions manually and count NOPs needed.','C','I'],
+['Measure the impact of instruction fetch alignment on a loop: compare a loop naturally aligned to 64 bytes vs misaligned. Use perf stat.','C','I'],
+['Use uarch-bench to measure latency and throughput of IMUL, IDIV, FADD, FMUL, LEA on your CPU. Compare with Agner Fog tables.','C','I'],
+['What is the machine-clear event? What causes it (memory ordering violation, self-modifying code, FP assist) and how does it show in perf counters?','T','A'],
+['What is the uop cache (DSB on Intel)? What is its capacity, bandwidth, and when does the decoder fall back to the legacy decode pipeline?','T','I'],
+['What is the difference between a monolithic ROB and distributed completion buffers? What does splitting into load, store, and integer queues enable?','T','A'],
+['Design a 6-wide superscalar front-end: describe fetch, branch prediction, decode, and rename stages to sustain 6 instructions per cycle.','T','A']
+]},
+{id:'m06',phase:1,num:'06',icon:'🧮',title:'ALU Design & Integer Arithmetic',desc:'Adder architectures, fast multipliers, dividers, shifters, saturating arithmetic, carry propagation.',qs:[
+['What is a ripple-carry adder? What is its critical path in terms of gate delays and why is it too slow for a modern CPU?','T','B'],
+['What is a carry-lookahead adder (CLA)? How does it precompute generate and propagate signals to reduce critical path to O(log n)?','T','B'],
+['What is a carry-select adder? How does it reduce latency by pre-computing both possible carry-in results in parallel?','T','B'],
+['What is a prefix adder (Kogge-Stone, Han-Carlson, Brent-Kung)? How do they differ in gate depth, fanout, and wire routing complexity?','T','I'],
+['What is 2s complement representation? How does it allow subtraction as addition, and how does overflow detection work?','T','B'],
+['What is a Booth encoding multiplier? How does radix-4 Booth encoding reduce the number of partial products?','T','I'],
+['What is a Wallace tree multiplier? How does it use carry-save adders (CSAs) to sum partial products in O(log n) stages?','T','I'],
+['What is an integer divider? Compare restoring, non-restoring, and SRT division and why is division so much slower than multiplication?','T','I'],
+['What is a barrel shifter? How does it implement an arbitrary shift in a single cycle using multiplexers?','T','B'],
+['What is saturating arithmetic? Where is it used (DSP, SIMD) and how does the hardware detect saturation differently from overflow?','T','I'],
+['Implement a 4-bit carry-lookahead adder in Verilog: generate G and P signals for each bit, compute group carry, produce sum and carry-out.','C','I'],
+['Implement a 32x32 unsigned multiplier using Booth radix-4 encoding in Python: generate partial products, sign-extend, sum, and verify against Python multiply.','C','A'],
+['Implement a 16-bit non-restoring divider in Python: simulate each trial subtraction step and build the quotient bit by bit. Verify against Python divide.','C','I'],
+['Write a benchmark that measures integer multiply latency and throughput for different widths (8, 16, 32, 64 bit). Compare with Agner Fog tables.','C','I'],
+['Implement a 64-bit Kogge-Stone prefix adder in Verilog. Synthesize with Yosys. Report gate count, critical path, and compare with ripple-carry.','C','A'],
+['Write a test bench for a 32-bit Booth multiplier: test corner cases (0x0, max*max, negative*negative, overflow) with 10000 random cases.','C','I'],
+['What is the fused multiply-add (FMA) instruction? How does it improve numerical accuracy by computing a*b+c with a single rounding step?','T','I'],
+['What is modular arithmetic and why does it naturally arise in binary integer hardware?','T','B'],
+['What is the relationship between adder critical path and clock frequency? How does deeper pipelining raise achievable clock rate?','T','I'],
+['Design the integer execution unit for a low-power IoT microcontroller: choose between ripple-carry, CLA, and prefix adder based on area, power, and frequency.','T','I']
+]},
+{id:'m07',phase:1,num:'07',icon:'🔢',title:'Floating-Point Architecture',desc:'IEEE 754, FP pipeline, rounding modes, denormals, FMA, FP exceptions, NaN propagation, precision.',qs:[
+['What is IEEE 754 single precision format? Describe the sign, exponent (biased 127), and mantissa (implicit leading 1) fields.','T','B'],
+['What are the five IEEE 754 exception types: invalid operation, division by zero, overflow, underflow, and inexact? Give a concrete example of each.','T','B'],
+['What is a denormal (subnormal) number? Why does it exist and why is processing denormals slow on most hardware?','T','I'],
+['What are the four IEEE 754 rounding modes: round-to-nearest-even, toward-zero, toward-positive, toward-negative? When does each matter?','T','B'],
+['What is catastrophic cancellation? Give a numerical example showing the loss of significant digits when subtracting nearly-equal numbers.','T','I'],
+['What is the difference between single (float), double (double), and extended (x87 80-bit) precision? When do intermediate results need higher precision?','T','I'],
+['What is FMA (Fused Multiply-Add)? How does computing a*b+c in one operation with one rounding step improve performance and accuracy?','T','I'],
+['What is NaN? Describe quiet NaN (qNaN) vs signaling NaN (sNaN) and how NaN propagates through arithmetic operations.','T','B'],
+['What is the x87 FPU stack model? How does it differ from the SSE/AVX register-file model and why was the stack model problematic for compilers?','T','I'],
+['What is Kahan summation? How does it use a compensation variable to reduce floating-point accumulation error?','T','I'],
+['Write an IEEE 754 single-precision multiply in C using only uint32_t: extract sign, exponent, mantissa, multiply mantissas, normalize, and handle special cases (NaN, Inf, zero, denormal).','C','A'],
+['Write a test program demonstrating catastrophic cancellation: compute (1+x)-1 for small x in float vs double vs direct x. Plot the error.','C','I'],
+['Write a benchmark demonstrating the denormal performance penalty: fill an array with values that underflow to denormals and measure throughput vs normal range.','C','I'],
+['Implement Kahan summation in C and compare accuracy with naive summation for 10^7 floats. Measure error vs double-precision reference.','C','I'],
+['Write a program that explores all IEEE 754 special values: +/-0, +/-Inf, qNaN, sNaN. Print bit patterns and test arithmetic combinations.','C','B'],
+['Use fesetround() to change FP rounding mode and observe effects on: integer-to-float conversion, subtraction near cancellation, and interval arithmetic.','C','I'],
+['What is flush-to-zero (FTZ) and denormals-are-zero (DAZ) mode? How do you enable them on x86 and when would you want to?','T','I'],
+['What is ULP (units in the last place)? How is it used to measure floating-point error and what does IEEE 754 require for basic operations?','T','I'],
+['What is the table-maker dilemma? Why is computing transcendental functions (sin, log, exp) to correct rounding extremely difficult?','T','A'],
+['Design the FP pipeline for a GPU SIMD lane: specify pipeline stages for FP32 ADD, MUL, and FMA. How does the hardware handle denormal inputs without performance penalty?','T','A']
+]},
+{id:'m08',phase:1,num:'08',icon:'💾',title:'Cache Architecture — Fundamentals',desc:'Cache basics, set-associativity, replacement policies, write policies, cache geometry, inclusion.',qs:[
+['What is a cache? Why does it exist and what fundamental property of program behavior does it exploit (temporal and spatial locality)?','T','B'],
+['What is a direct-mapped cache? Given a 16KB direct-mapped cache with 64-byte lines, compute the index bits, offset bits, and tag bits for a 32-bit address.','T','B'],
+['What is set-associativity? Compare direct-mapped, 4-way set-associative, and fully-associative in terms of conflict misses, hardware cost, and hit latency.','T','B'],
+['What are the 3Cs of cache misses: compulsory, capacity, and conflict? Give a concrete example of each and which cache parameter reduces each.','T','B'],
+['What is an LRU replacement policy? Describe exact LRU, pseudo-LRU (tree-PLRU), and NRU and the hardware cost of each.','T','B'],
+['What is write-back vs write-through cache policy? What is a dirty bit and when does it save memory bus bandwidth?','T','B'],
+['What is write-allocate vs no-write-allocate? Which combination is typical for L1 and why?','T','B'],
+['What is a cache line? What is the typical size (64 bytes on x86) and the trade-offs between larger and smaller lines?','T','B'],
+['What is a victim cache? How does a small fully-associative victim cache reduce conflict misses in a direct-mapped L1?','T','I'],
+['What is cache inclusion? What is an inclusive, exclusive, and non-inclusive (NINE) cache hierarchy and the coherence implications of each?','T','I'],
+['Write a cache simulator in Python: 32KB 4-way set-associative, 64-byte lines, LRU replacement. Feed an address trace and report miss rate.','C','I'],
+['Write C code that demonstrates conflict misses: access a stride-2048 pattern in a 32KB direct-mapped cache. Then switch to stride-1 and compare miss rates.','C','I'],
+['Write a matrix transpose function. Show cache miss degradation in the naive version. Implement a tiled version and measure the speedup with perf stat cache-misses.','C','I'],
+['Write a benchmark measuring L1, L2, and L3 cache latency using pointer chasing (linked list). Plot access latency vs working set size.','C','B'],
+['Given a 3-level cache hierarchy (32KB L1, 512KB L2, 16MB L3, all 64-byte lines, 8-way), compute the number of sets and address bit breakdown at each level.','C','B'],
+['Write a benchmark measuring L1 cache write bandwidth (streaming write) vs L3 write bandwidth. Explain why bandwidth drops sharply beyond L1.','C','I'],
+['What is the AMAT formula? Use it to compute effective L1 hit latency given: L1 hit rate=95%, L1=4 cycles, L2=12 cycles, L3=40 cycles, DRAM=200 cycles.','T','B'],
+['What is VIPT (virtually-indexed, physically-tagged) cache? What aliasing problem can it create and how is it avoided?','T','I'],
+['What is a sector cache? How does it reduce tag overhead by sharing one tag across multiple sub-blocks?','T','I'],
+['Design the cache hierarchy for a low-power mobile SoC: specify L1-I, L1-D, L2, LLC sizes, associativity, and inclusion policy given a 3W power budget.','T','A']
+]},
+{id:'m09',phase:1,num:'09',icon:'🔮',title:'Memory Hierarchy & Prefetching',desc:'DRAM internals, memory controllers, hardware prefetchers, software prefetch, MSHR, memory-level parallelism.',qs:[
+['What is the DRAM hierarchy: row, bank, rank, channel, DIMM? What is a row buffer and how does a row hit differ from a row miss in latency?','T','B'],
+['What are tCL, tRCD, tRP, and tRAS DRAM timing parameters? What sequence of DRAM commands (ACT, READ, PRE) reads from a closed row?','T','I'],
+['What is a memory controller? What functions does it perform: DRAM scheduling, row buffer management, rank interleaving, and ECC?','T','I'],
+['What is memory-level parallelism (MLP)? How does an OOO processor generate multiple outstanding cache misses simultaneously?','T','I'],
+['What is a MSHR (Miss Status Holding Register)? How does it track in-flight cache misses and allow accesses to the same line to merge?','T','I'],
+['What is a hardware prefetcher? Describe the sequential, stride, and stream prefetcher. What access pattern does each target?','T','I'],
+['What is the difference between a next-line prefetcher and a stride prefetcher? How does a stride prefetcher detect the stride?','T','I'],
+['What is a software prefetch instruction (__builtin_prefetch in GCC, PREFETCHT0 in x86)? When does it help and when does it hurt?','T','I'],
+['What is DRAM bandwidth vs latency? Why does streaming access achieve near-peak bandwidth while random access is latency-limited?','T','B'],
+['What is HBM (High Bandwidth Memory)? How does stacking DRAM on top of the CPU die reduce latency and increase bandwidth vs DDR5?','T','I'],
+['Write a benchmark measuring DRAM bandwidth using streaming reads (sequential array traversal). Compare with peak theoretical bandwidth from the DRAM spec.','C','B'],
+['Write a benchmark demonstrating stride prefetcher behavior: measure access time for stride-1, stride-8, stride-64, stride-512. Explain where prefetching helps.','C','I'],
+['Write a linked-list traversal benchmark with randomized node order. Add __builtin_prefetch with varying lookahead distances. Find the optimal prefetch distance.','C','I'],
+['Write a matrix multiply kernel. Profile with perf stat to identify L2 and L3 miss rates. Add software prefetch to the inner loop and measure improvement.','C','I'],
+['Write a program measuring DRAM row buffer hit rate by accessing the same bank with sequential vs random column patterns.','C','A'],
+['Write a benchmark exercising memory-level parallelism: issue N independent loads simultaneously using a pointer array. Measure how throughput scales with N.','C','I'],
+['What is NUMA (Non-Uniform Memory Access)? How does the memory controller on a multi-socket system distinguish local and remote memory accesses?','T','I'],
+['What is the open-page vs closed-page DRAM scheduling policy? Which is better for streaming workloads vs random-access workloads?','T','I'],
+['What is DDR5 vs LPDDR5 vs HBM3? Compare bandwidth, latency, power, and use case for each.','T','I'],
+['Design the memory system for a 4-core server processor: memory channels, DIMM config, LLC size, prefetcher type, and ECC policy for an OLTP database workload.','T','A']
+]},
+{id:'m10',phase:2,num:'10',icon:'🔗',title:'Cache Coherence Protocols',desc:'MSI, MESI, MOESI, MESIF, snooping vs directory, false sharing, coherence traffic, multicore implications.',qs:[
+['What is cache coherence? What two invariants must a protocol guarantee: single-writer-multiple-reader (SWMR) and data-value invariant?','T','B'],
+['What is the MSI protocol? Describe the three states, transitions triggered by processor read/write and bus snoops, and messages sent.','T','B'],
+['What is the MESI protocol? What does the Exclusive state add over MSI and how does it avoid a bus upgrade transaction on clean-line write?','T','B'],
+['What is the MOESI protocol? What does the Owned state allow: dirty sharing without write-back to memory?','T','I'],
+['What is snooping coherence? How does a broadcast bus allow every cache to monitor all transactions without a centralized directory?','T','I'],
+['What is directory-based coherence? How does the directory track which caches hold a copy and what messages does it send on a write request?','T','I'],
+['What is false sharing? Give a concrete C example where two threads modify different variables in the same cache line and show the coherence traffic generated.','T','B'],
+['What is the MESIF protocol (Intel QPI/UPI)? What does the Forward state add to reduce memory controller traffic in multi-socket systems?','T','I'],
+['What is an invalidation-based vs update-based coherence protocol? What are the trade-offs in write traffic vs read traffic?','T','I'],
+['What is a write-invalidate storm? When does it occur and how does directory coherence limit the damage vs snooping?','T','I'],
+['Demonstrate false sharing in C: two threads increment adjacent int array elements in a tight loop. Measure throughput. Pad to separate cache lines. Measure again.','C','B'],
+['Write a MESI coherence simulator in Python: model 4 caches, a bus, and memory. Simulate a trace of processor requests and show state transitions at each step.','C','I'],
+['Write a multi-threaded benchmark causing coherence traffic: one thread produces into a shared buffer, another reads it. Measure throughput vs local access.','C','I'],
+['Use perf c2c to identify false sharing in a real program. Fix it with padding and measure the improvement.','C','I'],
+['Write a lock-free queue using atomic operations. Profile coherence traffic with perf stat cache-misses. Measure scalability from 2 to 16 threads.','C','A'],
+['Use Intel PCM or AMD uProf to measure inter-socket coherence traffic during a NUMA benchmark. Identify data structures causing cross-socket traffic.','C','A'],
+['What is the MOESI owned state in AMD processors? How does it allow cache-to-cache transfer (supplying dirty data directly) without going to main memory?','T','I'],
+['What is a coherence protocol deadlock? Give a classic example of two nodes simultaneously requesting exclusive access to each other s lines.','T','A'],
+['What is silent eviction of a shared line vs a dirty line? What write-back traffic does each generate?','T','I'],
+['Design a directory coherence protocol for a 64-core processor with distributed L3 slices: describe the directory structure, message types, and three-hop transactions.','T','A']
+]},
+{id:'m11',phase:2,num:'11',icon:'⚖️',title:'Memory Consistency Models',desc:'Sequential consistency, TSO, relaxed models, memory barriers, C++ memory model, acquire-release, happens-before.',qs:[
+['What is a memory consistency model? What is it specifying: the order in which memory operations from different processors appear to take effect?','T','B'],
+['What is sequential consistency (SC)? State the definition and give a small concurrent program example where SC guarantees a specific outcome.','T','B'],
+['What is Total Store Order (TSO)? How does the x86 memory model allow stores to be locally buffered so that loads from another CPU see a stale value?','T','I'],
+['What is the classic TSO Dekker litmus test: two threads write their flag then read the other. Can both reads see 0 under TSO? Explain.','T','I'],
+['What is a memory barrier (fence)? What does MFENCE, LFENCE, SFENCE do on x86 and when must a programmer insert them?','T','I'],
+['What is the difference between acquire semantics and release semantics? How do they map to LDAR/STLR on ARM64 and load-acquire/store-release in C++?','T','I'],
+['What is the C++ memory model? Describe memory_order_relaxed, acquire, release, acq_rel, seq_cst. When would you use each?','T','I'],
+['What is the happens-before relation in C++? How does store-release and load-acquire on the same atomic variable establish ordering?','T','I'],
+['What is a data race in the C++ memory model? What is undefined behavior and why is a race on a non-atomic variable not safe?','T','I'],
+['What is the DEC Alpha memory model? What reorderings does it allow that even ARM64 does not, and what does this mean for lock-free code?','T','A'],
+['Write a TSO violation demonstration: two C++ threads each write their own variable and read the other using memory_order_relaxed. Observe both reads returning old values.','C','I'],
+['Write a correct spinlock using C++ atomics: lock uses test-and-set with memory_order_acquire, unlock uses store with memory_order_release. Explain why these are sufficient.','C','I'],
+['Write a single-producer single-consumer lock-free queue using C++ atomics: use release for enqueue and acquire for dequeue. Verify with stress testing.','C','A'],
+['Use CDSChecker or Litmus to verify a lock-free algorithm under the C++ memory model and under TSO. Identify any violating executions.','C','A'],
+['Benchmark the cost of memory_order_seq_cst vs memory_order_relaxed atomic operations on x86 and ARM64. Explain the hardware difference.','C','I'],
+['Write a test demonstrating that two relaxed-order stores on one thread are not guaranteed to be seen in order by another thread on ARM64.','C','I'],
+['What is the difference between the x86 TSO model and the ARM64 multi-copy atomic (MCA) model? What additional reorderings does ARM64 permit?','T','A'],
+['What is a store buffer? Draw a diagram showing how it causes a load to return stale data under TSO, and how MFENCE drains it.','T','I'],
+['What is a load queue and how does it interact with speculative execution? How does the processor detect memory ordering violations?','T','A'],
+['Design the synchronization strategy for a lock-free hash map running correctly on both x86 (TSO) and ARM64 (relaxed). Identify every operation needing a barrier and what type.','T','A']
+]},
+{id:'m12',phase:2,num:'12',icon:'📦',title:'SIMD & Vector Processing',desc:'SSE/AVX/AVX-512, NEON, RISC-V V extension, auto-vectorization, intrinsics, gather/scatter, masking.',qs:[
+['What is SIMD (Single Instruction Multiple Data)? Give the motivating example of adding two arrays element-wise and show the speedup from 4-wide SIMD vs scalar.','T','B'],
+['What is the x86 SIMD evolution: MMX (64-bit), SSE (128-bit), SSE2, SSE4, AVX (256-bit), AVX-512 (512-bit)? What does each generation add?','T','B'],
+['What is an intrinsic? How does _mm256_add_ps(a, b) map to the VADDPS instruction and why is it preferable to inline assembly?','T','B'],
+['What is a lane in SIMD? How does a 256-bit AVX register hold 8 float lanes and what is the difference between in-lane and cross-lane operations?','T','I'],
+['What is the AVX-512 mask register? How does k1 masking allow per-lane conditional updates without branching?','T','I'],
+['What is gather and scatter? How do _mm256_i32gather_ps() and _mm256_i32scatter_ps() load/store from non-contiguous memory and why are they slow?','T','I'],
+['What is ARM NEON? How does it differ from SVE (Scalable Vector Extension) in fixed 128-bit vs implementation-defined vector width?','T','I'],
+['What is the RISC-V V extension? How does it use VLEN (vector length in bits) and LMUL (length multiplier) for variable-length vectors?','T','I'],
+['What is auto-vectorization? What conditions must a loop meet: no aliasing, no data-dependent exits, unit stride or predictable stride?','T','I'],
+['What is the difference between horizontal and vertical SIMD operations? Why are horizontal reductions more expensive than vertical element-wise operations?','T','I'],
+['Write an AVX2 intrinsic SAXPY (y = a*x + y) for float arrays. Handle tail (N % 8 != 0) with scalar loop. Benchmark vs compiler auto-vectorized.','C','I'],
+['Write an AVX2 implementation of 4x4 matrix multiplication using _mm256_fmadd_ps. Compare throughput with naive scalar triple-loop.','C','I'],
+['Write an AVX-512 threshold operation: set output[i]=255 if input[i]>threshold, else 0. Use masked stores for the tail. Benchmark vs scalar.','C','I'],
+['Write an ARM NEON dot product using vld1q_f32, vmulq_f32, and vaddvq_f32. Benchmark vs scalar and GCC auto-vectorized on ARM64.','C','I'],
+['Write a function that auto-vectorizes cleanly under GCC -O3 -march=native. Then write one that fails (due to aliasing). Use -fopt-info-vec to confirm.','C','B'],
+['Use ISPC to write a SIMD Mandelbrot set renderer. Compare throughput with scalar C and auto-vectorized C.','C','A'],
+['What is the AVX-512 transition penalty on Intel? Why does executing a legacy SSE instruction after AVX cause a 70-cycle penalty and how do you avoid it?','T','I'],
+['What is prefetching in SIMD? How does _mm_prefetch() help when SIMD compute rate exceeds memory bandwidth?','T','I'],
+['What is the difference between packed and scalar SSE/AVX instructions? When does the compiler emit scalar SSE instructions (ADDSS vs ADDPS)?','T','B'],
+['Design a SIMD implementation strategy for a real-time audio DSP pipeline processing 64-sample blocks at 48kHz. Choose between SSE, AVX, NEON based on portability and latency.','T','A']
+]},
+{id:'m13',phase:2,num:'13',icon:'🖥️',title:'Virtual Memory & TLB Architecture',desc:'Page tables, multi-level PT, TLB, ASID, huge pages, TLB shootdown, inverted PT, IOMMU.',qs:[
+['What is virtual memory? What problem does it solve for processes and what hardware mechanism (MMU) enables it?','T','B'],
+['What is a page table? Describe a two-level page table for a 32-bit address space with 4KB pages: PDE, PTE, and virtual address decomposition.','T','B'],
+['What is the x86-64 4-level page table (PML4)? Decompose a 48-bit virtual address into PML4, PDPT, PD, PT, and offset fields.','T','B'],
+['What is a TLB? What does it cache and what is the typical TLB hit latency vs page table walk latency?','T','B'],
+['What is a TLB miss? Describe hardware page table walk (x86) vs software-managed TLB (MIPS).','T','B'],
+['What is an ASID (Address Space ID)? How does it allow the TLB to cache translations from multiple processes without flushing on every context switch?','T','I'],
+['What is a huge page (large page)? Compare 4KB, 2MB, and 1GB page sizes and their TLB coverage trade-offs.','T','I'],
+['What is a TLB shootdown? When does it occur and how does the OS implement it on a multicore system using IPIs?','T','I'],
+['What is an inverted page table? How does it store one entry per physical frame and how does a hash enable virtual-to-physical lookup?','T','I'],
+['What is the IOMMU? How does it provide virtual-to-physical translation for DMA devices and enable safe device assignment to VMs?','T','I'],
+['Write a program that exercises TLB pressure: access N randomly ordered 4KB pages. Measure access latency as N grows from 16 to 65536 pages. Identify the TLB capacity.','C','B'],
+['Write a C program using mmap(MAP_HUGETLB) to enable huge pages. Compare TLB miss rate and throughput for a 1GB array with 4KB vs 2MB huge pages.','C','I'],
+['Write a two-level page table walker in C: given a simulated 32-bit address space and a root page directory, walk two levels and return the physical address.','C','I'],
+['Write a benchmark measuring context switch overhead under high TLB pressure: 100 processes each with a 100MB working set. Measure DTLB-load-misses per switch.','C','I'],
+['Implement a software-managed TLB for a MIPS-style processor in a simulator: handle TLB miss by walking the page table in a C handler. Measure overhead vs hardware tablewalk.','C','A'],
+['Write a NUMA-aware memory allocator using mmap with MAP_FIXED for a specific NUMA node. Measure vs NUMA-remote allocation.','C','I'],
+['What is the x86-64 5-level page table (PML5)? What address space size does it support and what feature bit enables it?','T','I'],
+['What is page coloring? How does distributing physical pages across cache sets reduce conflict misses in a physically-indexed cache?','T','A'],
+['What is CR3 on x86? What happens to the TLB when CR3 is loaded and how does the PCID extension avoid a full TLB flush?','T','I'],
+['Design the TLB hierarchy for a 4-wide superscalar OOO processor: specify ITLB and DTLB sizes, associativity, L2 TLB, and how multiple outstanding page table walks are handled.','T','A']
+]},
+{id:'m14',phase:2,num:'14',icon:'⚙️',title:'Instruction-Level Optimization & Compiler-CPU Co-design',desc:'Compiler output, latency/throughput, critical paths, loop unrolling, strength reduction, LTO, PGO.',qs:[
+['What is the difference between instruction latency and instruction throughput? Give examples from the x86 Skylake port model.','T','B'],
+['What is the critical dependency chain? How does a loop-carried dependency limit IPC even if there are no resource bottlenecks?','T','I'],
+['What is strength reduction? Give an example where a compiler replaces a multiply by a constant with shifts and adds.','T','B'],
+['What is loop unrolling? How does it reduce branch prediction overhead and enable better instruction scheduling? What are the limits?','T','B'],
+['What is software pipelining? How does it interleave instructions from multiple loop iterations to hide latencies and fill execution slots?','T','I'],
+['What is a peephole optimizer? Give 3 examples of local instruction patterns that a peephole pass can replace with shorter or faster equivalents.','T','I'],
+['What is LTO (Link-Time Optimization)? How does it enable cross-module inlining and dead code elimination impossible with per-TU compilation?','T','I'],
+['What is PGO (Profile-Guided Optimization)? How does a profiling run feed branch probability and function frequency data back to the compiler?','T','I'],
+['What is the BOLT binary optimizer? How does it use LBR profiles to reorder basic blocks for better instruction cache utilization?','T','A'],
+['What are __builtin_expect(), __builtin_clz(), and __builtin_prefetch() intrinsics and what code does each generate?','T','I'],
+['Compile a simple inner loop with -O0, -O1, -O2, and -O3. Use objdump to compare the generated code. List every optimization applied at each step.','C','B'],
+['Write a benchmark with a loop-carried dependency. Use LLVM MCA to identify the critical path latency. Rewrite to break the dependency and measure the IPC improvement.','C','I'],
+['Profile a function with perf record --call-graph=lbr. Apply BOLT to reorder the binary and measure the improvement.','C','A'],
+['Use __attribute__((optimize)) and -fprofile-generate/-fprofile-use to apply PGO to a hot function. Measure the speedup vs non-PGO build.','C','I'],
+['Write a function where __builtin_expect helps the compiler emit better branch layout. Use objdump to confirm the likely branch falls through.','C','I'],
+['Use Compiler Explorer (godbolt.org) to compare RISC-V, ARM64, and x86-64 codegen for the same C function. Identify ISA-specific idioms.','C','B'],
+['What is register pressure? How does it limit software pipelining and what is the effect when spill code is introduced?','T','I'],
+['What factors does a compiler weigh when deciding to inline a function: call frequency, callee size, register pressure, inlining budget?','T','I'],
+['What is the difference between static prediction (__builtin_expect) and dynamic prediction (PGO profile)? When does each give better results?','T','I'],
+['Design a compiler flags and PGO+LTO build pipeline for a latency-critical C++ server application. List every flag and justify its expected impact.','T','A']
+]},
+{id:'m15',phase:2,num:'15',icon:'🔋',title:'CPU Power Management & DVFS',desc:'P-states, C-states, RAPL, Turbo Boost, clock gating, power gating, TDP, thermal throttling.',qs:[
+['What is TDP (Thermal Design Power)? What does it guarantee and what is the difference between a sustained TDP workload and a short burst above TDP?','T','B'],
+['What is a P-state (Performance state)? How does DVFS (Dynamic Voltage and Frequency Scaling) reduce power by lowering both voltage and frequency?','T','B'],
+['What is a C-state (CPU idle state)? Compare C0 (active), C1 (halt), C3 (sleep), C6 (deep power down) in exit latency and power saving.','T','B'],
+['What is Intel Turbo Boost (AMD Precision Boost)? How does it raise clock frequency above base frequency when thermal headroom allows?','T','I'],
+['What is RAPL (Running Average Power Limit)? What power domains does it expose (package, core, uncore, DRAM) and how does it enforce limits?','T','I'],
+['What is clock gating? How does it reduce dynamic power by stopping the clock to idle pipeline stages and functional units?','T','I'],
+['What is power gating? How does it reduce leakage power by cutting VDD to idle blocks and what is the power gate opening overhead?','T','I'],
+['What is the relationship between power and voltage/frequency? Why does reducing voltage by 10% reduce dynamic power by approximately 20%?','T','B'],
+['What is thermal throttling? What happens when the CPU die temperature exceeds TjMax?','T','I'],
+['What is the difference between big.LITTLE heterogeneous and homogeneous multicore in terms of power efficiency for mixed workloads?','T','I'],
+['Write a C program that reads RAPL energy counters (/dev/msr) before and after a compute loop. Compute energy consumption and average power.','C','I'],
+['Use turbostat to measure per-core frequency, power, and temperature while running a workload. Show how Turbo Boost behaves under different thread counts.','C','B'],
+['Write a benchmark demonstrating C-state latency: measure the time from a CPU wake-up (SIGIO from timer) to the first instruction executed.','C','I'],
+['Write a DVFS experiment: pin a thread to a core, set frequency with cpufreq-set, measure GFLOPS. Plot GFLOPS vs frequency vs power (RAPL). Compute GFLOPS/W.','C','I'],
+['Use perf stat with energy-cores, energy-pkg, and energy-ram events to measure energy consumption for sorting 100M integers. Compare quicksort vs radix sort energy.','C','I'],
+['Write a power virus: a loop that maximally activates all execution units. Measure peak power draw with RAPL. Compare with LINPACK.','C','A'],
+['What is the P-state coordination problem on a multicore die sharing a voltage rail? Why can one low-frequency core prevent others from boosting?','T','I'],
+['What is an efficiency island in ARM big.LITTLE? How does EAS (Energy Aware Scheduler) in Linux decide which cluster to place a task on?','T','I'],
+['What is the race-to-idle strategy? Why is it sometimes more energy-efficient to run at max frequency then sleep vs running slowly?','T','I'],
+['Design a power management policy for a mobile CPU running a UI workload with 16ms frame deadline: specify P-states and C-states to meet the deadline while minimizing energy.','T','A']
+]},
+{id:'m16',phase:3,num:'16',icon:'🛡️',title:'CPU Security — Spectre, Meltdown & Mitigations',desc:'Transient execution, speculative side channels, Meltdown, Spectre v1/v2/v4, MDS, mitigations, retpoline.',qs:[
+['What is a side-channel attack? How does a CPU microarchitectural side channel differ from a software-level side channel?','T','B'],
+['What is a cache timing side channel? How does the flush+reload technique measure whether a cache line is in cache to infer a secret?','T','I'],
+['What is Meltdown (CVE-2017-5754)? How does speculative execution temporarily access kernel memory before the permission check faults, then leak via cache timing?','T','I'],
+['What is Spectre v1 (bounds check bypass, CVE-2017-5753)? Give a concrete code example showing how a bounds check is bypassed speculatively and data leaks via cache timing.','T','I'],
+['What is Spectre v2 (branch target injection, CVE-2017-5715)? How does the attacker poison the BTB to redirect speculative execution to a gadget?','T','I'],
+['What is Spectre v4 (speculative store bypass, CVE-2018-3639)? How does speculative load bypass a younger unresolved store?','T','I'],
+['What is MDS (Microarchitectural Data Sampling): RIDL, Fallout, ZombieLoad? What internal CPU buffers do they sample?','T','A'],
+['What is KPTI (Kernel Page Table Isolation)? How does it mitigate Meltdown by unmapping kernel pages from user-space page tables, and what is its performance cost?','T','I'],
+['What is retpoline? How does it replace indirect branch with a ret-based loop to prevent branch target speculation and mitigate Spectre v2?','T','I'],
+['What is serializing fence (LFENCE) mitigation for Spectre v1? How does inserting LFENCE after a bounds check prevent speculative out-of-bounds access?','T','I'],
+['Write a flush+reload side channel in C: allocate a probe array, flush it with clflush, speculatively access it based on a secret byte, and use timing to recover the secret.','C','A'],
+['Implement a Spectre v1 gadget and attacker in C using user-space shared memory: train the branch predictor, trigger speculative access, recover a byte via flush+reload.','C','A'],
+['Write a program demonstrating Spectre v2 within a single process: poison the indirect branch predictor to redirect speculative execution to a chosen gadget address.','C','A'],
+['Measure the performance overhead of KPTI: write a benchmark making 1M system calls (getpid). Compare perf on kernels with/without KPTI. Explain the cost source.','C','I'],
+['Use cpuid to detect which Spectre/Meltdown mitigations are active (IBRS, IBPB, STIBP, SSBD). Cross-reference with /sys/devices/system/cpu/vulnerabilities/*.','C','B'],
+['Write a secret-dependent memory access pattern and mitigate it with constant-time code: use CMOV instead of branch, avoid secret-indexed array access.','C','I'],
+['What is IBRS and IBPB? What do they prevent and what is their overhead?','T','I'],
+['What is eIBRS (Enhanced IBRS)? How does it differ from classic IBRS and what is its performance overhead?','T','I'],
+['What is a Spectre gadget? What properties must a code sequence have to be useful as one and how do automated gadget scanners find them?','T','A'],
+['Design a software mitigation strategy for a web browser JIT compiler to prevent Spectre v1: describe changes to memory layout, jitted code, and timer precision.','T','A']
+]},
+{id:'m17',phase:3,num:'17',icon:'🔐',title:'Trusted Execution & CPU Security Features',desc:'Intel SGX, AMD SEV, ARM TrustZone, TEE, secure boot, hardware root of trust, attestation.',qs:[
+['What is a hardware root of trust? How does a CPU boot chain establish trust from ROM code to bootloader to OS using hash measurements?','T','B'],
+['What is Intel SGX? What is an enclave, how is EPC protected from OS and hypervisor, and what threat model does it address?','T','I'],
+['What is the SGX attestation process? Describe local and remote attestation, the quoting enclave, and Intel Attestation Service (IAS).','T','I'],
+['What is AMD SEV? How does it protect VM memory from the hypervisor using per-VM encryption keys managed by the AMD Secure Processor?','T','I'],
+['What is AMD SEV-SNP? What does it add over SEV-ES: memory integrity protection using reverse map tables (RMP)?','T','I'],
+['What is ARM TrustZone? How does it partition hardware into Secure and Normal World using a monitor mode and the NS bit?','T','I'],
+['What is OP-TEE? How does it implement a Trusted OS in the ARM TrustZone Secure World and how does a TA communicate with the Normal World?','T','I'],
+['What is Intel TXT? How does it enable measured launch of a hypervisor using SINIT ACM and TPM PCR extension?','T','I'],
+['What is a TPM? What operations does it provide: key generation, signing, sealing, quote, and PCR extend/read?','T','B'],
+['What is secure boot? How does UEFI secure boot use a certificate database (db, dbx, KEK, PK) to verify the bootloader signature?','T','B'],
+['Write a Linux kernel module that reads TPM PCR values and compares them with expected values. Signal an alert if any PCR has changed since last boot.','C','I'],
+['Write a simple SGX enclave (using SGX SDK) that stores a secret string and exposes a sealed blob. Verify the blob cannot be unsealed outside the enclave.','C','A'],
+['Write an OP-TEE trusted application that generates an RSA key pair in the Secure World and exposes only the public key to the Normal World.','C','A'],
+['Write a remote attestation flow using Intel SGX: enclave generates a quote, send to verifier, verify with IAS, establish shared secret only if quote is valid.','C','A'],
+['Configure AMD SEV on a QEMU VM: launch a VM with SEV enabled, verify encryption, and measure memory access overhead vs non-SEV VM.','C','A'],
+['Write a TPM 2.0 attestation protocol using tpm2-tools: extend a PCR with an application measurement, generate a quote, verify the signature with the TPM EK certificate.','C','A'],
+['What is the SGX threat model? What attacks can SGX defend against and what can it NOT defend against (side channels, physical probing)?','T','I'],
+['What is the difference between SGX1 and SGX2? What does SGX2 dynamic memory management allow that SGX1 cannot?','T','I'],
+['What is Foreshadow (L1TF)? How does it bypass SGX enclave isolation using speculative execution and what hardware mitigation was added?','T','A'],
+['Design a confidential computing architecture for a medical AI inference service: specify TEE technology, attestation protocol, key management, and data security.','T','A']
+]},
+{id:'m18',phase:3,num:'18',icon:'📏',title:'CPU Performance Analysis & PMU',desc:'PMU counters, perf, TopDown methodology, TMAM, bottleneck identification, flame graphs, cycle accounting.',qs:[
+['What is a PMU? What types of events does it count: hardware events (cycles, instructions, cache-misses) vs software events vs tracepoints?','T','B'],
+['What is the difference between counting mode and sampling mode in perf? How does sampling use PMU overflow interrupts to attribute samples to instructions?','T','B'],
+['What is the TopDown Microarchitecture Analysis Method (TMAM)? Describe the four Level-1 buckets: Frontend Bound, Backend Bound, Bad Speculation, and Retiring.','T','I'],
+['What is Frontend Bound? What sub-buckets does it break into: Fetch Latency (ICache miss, iTLB miss, DSB miss) and Fetch Bandwidth (decoder throughput)?','T','I'],
+['What is Backend Bound? What does it split into: Memory Bound (L1/L2/L3 bound, DRAM, Store) and Core Bound (port contention, divider)?','T','I'],
+['What is an LBR (Last Branch Record)? How does it record the last 32 taken branches in hardware and how is it used for call-graph profiling?','T','I'],
+['What is a PEBS (Precise Event Based Sampling) record? How does it provide exact instruction attribution vs skid in regular PMU sampling?','T','I'],
+['What is Intel PT (Processor Trace)? How does it record the full execution trace as a compressed bit stream?','T','A'],
+['What is a flame graph? How does call stack sampling from perf produce a flame graph and what insight does it give that a flat perf report does not?','T','B'],
+['What is a memory access trace? How do tools like Intel VTune attribute memory latency to specific load instructions and memory regions?','T','I'],
+['Use perf stat with the full TopDown L1 metric set (-M TopdownL1) on a compute workload. Identify the dominant bottleneck and drill down to L2 metrics.','C','I'],
+['Use perf record with PEBS to get precise attribution of LLC-load-misses to source lines. Find the top 3 memory bottleneck locations and propose fixes.','C','I'],
+['Generate a FlameGraph for a CPU-bound server application using perf record -g --call-graph=dwarf. Identify the hottest call chains.','C','B'],
+['Use Intel VTune Hotspots + Memory Access analysis to profile a matrix multiply. Identify which loads experience L3 misses.','C','I'],
+['Use perf stat to count branch-misses, cache-misses, and IPC for Python vs C implementing the same algorithm. Explain every counter difference.','C','B'],
+['Implement a cycle-accurate simulation of a 2-issue in-order processor in Python. Compute cycle breakdown: compute, memory wait, stall, idle.','C','A'],
+['What is the difference between wall time, CPU time, and cycles? How can wall time decrease while cycle count increases (frequency scaling)?','T','B'],
+['What is cold start vs warm start in a benchmark? Why does the first run take longer due to cold cache and TLB misses?','T','B'],
+['What sources of non-determinism affect benchmark repeatability: ASLR, frequency scaling, thermal state, OS scheduling jitter, NUMA placement?','T','I'],
+['Design a performance analysis methodology for a customer-reported regression: measurement setup, counter selection, bottleneck hypothesis, fix iteration, and validation.','T','A']
+]},
+{id:'m19',phase:3,num:'19',icon:'🧬',title:'CPU Microarchitecture — Modern Intel & AMD',desc:'Golden Cove, Zen 4, front-end, back-end, L1/L2/L3 details, fetch-decode-rename-dispatch.',qs:[
+['Walk through the Intel Golden Cove (Alder Lake P-core) front-end pipeline: Legacy Decode Pipeline, Decoded Stream Buffer (DSB), Instruction Decode Queue (IDQ), and the MITE/DSB mux.','T','A'],
+['What improvements does Intel Raptor Cove make over Golden Cove in front-end fetch width, DSB capacity, and reservation station size?','T','A'],
+['Walk through the AMD Zen 4 front-end: L1 instruction cache size, branch predictor (TAGE-based), decode width, op cache, and rename width.','T','A'],
+['What is the Intel Sunny Cove (Ice Lake) back-end? Describe the execution engine: 10 execution ports, RS size, ROB size, and changes from Skylake.','T','A'],
+['What is the AMD Zen 4 back-end? Describe the execution units: integer (4 ALU, 2 AGU), FP (4-wide 512-bit FMAC), and Unified Scheduler size.','T','A'],
+['What is the decode bandwidth bottleneck on x86? How many instructions can Intel Golden Cove decode per cycle from legacy decoder vs DSB?','T','I'],
+['What is uop fusion on x86? Give examples of compare+branch fusion, load+operation fusion, and store fusion and how they reduce uop count.','T','I'],
+['What is the Intel Ring Bus vs Mesh interconnect for the LLC? Why did Intel switch from Ring to Mesh on Skylake-SP?','T','A'],
+['What is the AMD Infinity Fabric? How does it connect cores, cache, I/O die, and multiple chiplets in a Zen 4 design?','T','A'],
+['What is the Intel E-core (Gracemont) vs P-core (Golden Cove) design? What is the architectural difference in fetch width and issue width?','T','A'],
+['Use LLVM MCA with -mcpu=alderlake to analyze a hot loop on Intel Alder Lake. Interpret resource pressure per port and identify the bottleneck unit.','C','A'],
+['Compare the same loop on -mcpu=znver4 (AMD Zen 4) vs -mcpu=alderlake using LLVM MCA. Identify which architecture has better throughput and why.','C','A'],
+['Use perf with Intel-specific TopDown Level 2 and Level 3 breakdowns on an Alder Lake or Raptor Lake CPU. Identify bottlenecks for two different workloads.','C','A'],
+['Use pmu-tools (toplev.py) to get a full TopDown breakdown on your Intel CPU. Run on a memory-bound and compute-bound workload. Identify the Level 3 bottleneck for each.','C','A'],
+['Use likwid-bench to measure sustained memory bandwidth (STREAM triad) on Intel and AMD CPUs of the same generation. Compare with theoretical peak.','C','I'],
+['Use AMD uProf to profile an application on Zen 4. Identify memory access patterns generating cross-CCX traffic and restructure to improve locality.','C','A'],
+['What is Intel Alder Lake heterogeneous (P+E core) design? How does Intel Thread Director decide which core type to run each thread on?','T','A'],
+['What does Sapphire Rapids add over Alder Lake: AMX (Advanced Matrix Extensions), HBM support, and CXL?','T','A'],
+['What is AMD 3D V-Cache? How does stacking SRAM directly on the core die increase L3 from 32MB to 96MB and what workloads benefit most?','T','A'],
+['Design a microarchitecture evaluation methodology for two competing CPU designs for a specific HPC workload: experiments, counter sets, and decision criteria.','T','A']
+]},
+{id:'m20',phase:3,num:'20',icon:'🔧',title:'CPU Simulation & Microarchitecture Modeling',desc:'gem5, Sniper, McPAT, cycle-accurate simulation, analytical models, Roofline, design-space exploration.',qs:[
+['What is gem5? What simulation modes does it support: functional (fast), timing (cycle-accurate), syscall-emulation vs full-system?','T','I'],
+['What is the difference between a trace-driven simulator and an execution-driven simulator? What are the accuracy and speed trade-offs?','T','I'],
+['What is Sniper simulator? How does its interval simulation model provide faster simulation than gem5 while retaining reasonable accuracy?','T','I'],
+['What is McPAT? How does it estimate CPU area, dynamic power, and static power from microarchitecture parameters?','T','I'],
+['What is a CPI stack analysis in a simulator? How does it decompose total CPI into: ideal CPI + memory stall + branch misprediction stall + structural stall?','T','I'],
+['What is CACTI? How does it model SRAM cache access time, area, and power as a function of capacity, associativity, and technology node?','T','I'],
+['What is Amdahl Law? How does it limit the speedup of parallelizing a workload with a serial fraction S?','T','B'],
+['What is Gustafson-Barsis law? How does it challenge Amdahl by observing that problem size typically scales with processor count?','T','I'],
+['What is the Roofline model? How does it plot computational intensity (FLOP/byte) against achievable GFLOPs/s and DRAM bandwidth to identify bottlenecks?','T','B'],
+['What is a performance analytical model vs cycle-accurate simulation? When is each appropriate for design-space exploration?','T','I'],
+['Run a gem5 full-system simulation of a single-core ARM64 Linux boot. Measure simulated IPC and compare with real hardware perf stat.','C','A'],
+['Write a gem5 script that sweeps L1 cache size (16KB to 256KB) and measures IPC for a pointer-chasing benchmark. Plot IPC vs cache size and identify the capacity knee.','C','A'],
+['Use McPAT to estimate the power and area of a 4-core OOO processor at 7nm. Vary ROB size from 128 to 512 and plot area and power.','C','A'],
+['Use the Roofline model to characterize a DGEMM implementation: measure operational intensity with perf stat and identify compute vs memory bound.','C','I'],
+['Write a CPI breakdown script in Python that reads perf stat output and computes: ideal CPI, frontend stall cycles/inst, memory bound cycles/inst, backend stall cycles/inst.','C','I'],
+['Use CACTI to model a 32KB 8-way L1 cache at 7nm. Compare access time, read energy, and area vs a 64KB direct-mapped cache.','C','I'],
+['What is the gem5 memory system model? How does it simulate cache misses, MSHR allocation, and DRAM access with a timing-accurate model?','T','I'],
+['What is a checkpoint simulation workflow? How does gem5 fast-forward to a representative region with a functional model then switch to timing model?','T','I'],
+['What is SimPoint? How does it use basic block frequency vectors to identify representative simulation intervals and reduce simulation time by 100x?','T','A'],
+['Design a simulation study to evaluate whether a larger ROB (256 vs 512 entries) is worth the area cost for HPC benchmarks. Describe simulator, workloads, and decision metric.','T','A']
+]},
+{id:'m21',phase:3,num:'21',icon:'🏛️',title:'RISC-V Architecture Deep Dive',desc:'RISC-V base ISA, extensions (M, A, F, D, V, Zicsr), privileged spec, machine mode, supervisor mode, SBI.',qs:[
+['What is the RISC-V base ISA (RV32I)? What are the 32 registers (x0-x31), their ABI names, and the six instruction formats?','T','B'],
+['What are the standard RISC-V ISA extensions: M (multiply/divide), A (atomic), F (single FP), D (double FP), C (compressed 16-bit), V (vector), Zicsr (CSRs)? What does each add?','T','B'],
+['What are RISC-V CSRs? Name the most important ones: mstatus, mtvec, mepc, mcause, mie, mip, satp, and their function.','T','I'],
+['What are the three RISC-V privilege levels: Machine (M), Supervisor (S), User (U)? What can each level access and how does a trap promote to a higher level?','T','I'],
+['What is the RISC-V trap mechanism? What happens when an exception or interrupt fires: save PC to mepc/sepc, set mcause/scause, jump to mtvec/stvec.','T','I'],
+['What is the RISC-V SBI (Supervisor Binary Interface)? How does it allow the kernel (S-mode) to request M-mode services via ecall?','T','I'],
+['What is the RISC-V V extension vector model? Describe vl (vector length), vtype (element width, LMUL), and the vsetvli instruction.','T','I'],
+['What is the RISC-V A extension? Describe LR (load-reserved), SC (store-conditional) and how they implement compare-and-swap.','T','B'],
+['What is the RISC-V Zicsr extension? How do CSRRW, CSRRS, and CSRRC read-modify-write a CSR atomically?','T','I'],
+['What is the RISC-V hypervisor extension (H)? How does it add HS mode and second-level address translation (G-stage) for running a hypervisor natively?','T','A'],
+['Write a RISC-V M-mode bare-metal program: set up mtvec, enable machine timer interrupt (mstatus.MIE, mie.MTIE), program MTIMECMP, and handle the interrupt in a trap handler.','C','A'],
+['Write a RISC-V assembly function using LR/SC to implement compare-and-swap (CAS): atomically replace old_val with new_val. Handle AQ/RL ordering bits.','C','I'],
+['Write a RISC-V V extension vectorized strlen function: use vsetvli, vle8.v, vmseq.vx, vfirst.m to find the null byte.','C','A'],
+['Write a RISC-V CSR manipulation program: read the cycle counter (CSR 0xC00), measure instruction count (CSR 0xC02), and compute CPI for a short inner loop.','C','I'],
+['Implement a minimal RISC-V RV32IM interpreter in Python: decode each instruction format, execute arithmetic and load/store, and handle ecall (print to stdout). Run a fibonacci program.','C','A'],
+['Use Spike (RISC-V ISA simulator) and pk (proxy kernel) to run a RISC-V binary and trace instruction execution. Identify the top 10 most frequent instruction types.','C','I'],
+['What is the RISC-V compressed (C) extension? How do 16-bit instructions encode common RV32I instructions and what is the typical code size reduction?','T','I'],
+['What is the difference between RISC-V Zicsr CSRRW and a load/store to a memory-mapped register? Why are CSRs faster for frequently-read architectural state?','T','I'],
+['What is the RISC-V Sm/Ss extension namespace? How does it (Sm=machine-level, Ss=supervisor-level) organize privilege extension proposals?','T','I'],
+['Design a RISC-V SoC with a 5-stage in-order pipeline implementing: RV64IMAFD, M/S/U privilege levels, SV39 virtual memory, SBI via OpenSBI, and a UART for console.','T','A']
+]},
+{id:'m22',phase:3,num:'22',icon:'🎮',title:'GPU Architecture & GPGPU Computing',desc:'SIMT, warp/wavefront, SM/CU, register file, shared memory, L1/L2/HBM, occupancy, CUDA memory model.',qs:[
+['What is SIMT (Single Instruction Multiple Thread)? How does a GPU warp execute 32 threads in lockstep and how does divergence degrade performance?','T','B'],
+['What is a GPU Streaming Multiprocessor (SM) / Compute Unit (CU)? What functional units does each contain (CUDA cores, tensor cores, load/store units)?','T','B'],
+['What is GPU occupancy? How does the number of active warps per SM depend on register usage, shared memory usage, and block size?','T','I'],
+['What is the GPU memory hierarchy: register file, L1/shared memory, L2 cache, HBM/GDDR global memory? Give typical size and bandwidth at each level.','T','I'],
+['What is warp divergence? How does a warp with a divergent branch execute both paths and what is the worst-case throughput impact?','T','I'],
+['What is shared memory in a GPU SM? How does it enable fast inter-thread communication within a threadblock and what is a bank conflict?','T','I'],
+['What is coalesced memory access? How does aligning 32-thread accesses to a 128-byte segment reduce global memory transactions from 32 to 1?','T','I'],
+['What is the CUDA memory model? Describe the memory spaces: global, shared, local (per-thread stack), constant, texture, and their visibility.','T','B'],
+['What is a tensor core? How does it compute D = A*B+C for small matrices in one instruction and what data types does it support (FP16, BF16, INT8, FP8)?','T','I'],
+['What does H100 add over A100: NVLink 4.0, HBM3, Transformer Engine, confidential computing?','T','A'],
+['Write a CUDA matrix multiplication kernel using shared memory tiling: load tiles into shared memory, synchronize, compute partial products, repeat for all tiles.','C','I'],
+['Write a CUDA parallel prefix scan (inclusive sum). Use shared memory and two-phase (reduce + down-sweep) approach. Benchmark vs cuBLAS.','C','I'],
+['Profile a CUDA kernel using Nsight Compute: identify occupancy, warp efficiency, shared memory bank conflicts, and global memory access efficiency. Optimize one metric.','C','I'],
+['Write a CUDA kernel demonstrating warp divergence: thread ID % 2 == 0 takes a different path. Measure throughput vs a divergence-free equivalent.','C','I'],
+['Write a CUDA warp-level reduction using __shfl_down_sync to sum 32 values across a warp without shared memory.','C','I'],
+['Use ROCm/HIP to port a CUDA kernel to AMD GPU. Identify porting changes needed (warpSize=64 on RDNA vs 32 on NVIDIA).','C','A'],
+['What is persistent threads in CUDA? How does a grid of exactly SM-count blocks that loop over work items achieve better load balance?','T','A'],
+['What is L1 cache vs shared memory partitioning in a CUDA SM? How does cudaFuncSetAttribute with cudaFuncAttributePreferredSharedMemoryCarveout control the split?','T','I'],
+['What is the NVLink interconnect? How does NVLink 4.0 provide 900 GB/s bidirectional bandwidth between 8 H100 GPUs?','T','A'],
+['Design a GPU kernel optimization strategy for transformer self-attention: identify memory-bound vs compute-bound phases, propose tiling for Q*K^T, and discuss tensor core use.','T','A']
+]},
+{id:'m23',phase:3,num:'23',icon:'🔩',title:'CPU Design with HDL — RTL to Silicon',desc:'Verilog/SystemVerilog, synthesis, timing closure, floorplanning, VLSI design flow, FPGA implementation.',qs:[
+['What is RTL (Register Transfer Level)? How does RTL description differ from gate-level netlist and what tools translate RTL to gates?','T','B'],
+['What is synthesis? How does Yosys or Synopsys DC map Verilog RTL to a standard cell library and what optimizations does it perform?','T','I'],
+['What is STA (Static Timing Analysis)? What is setup time, hold time, and the critical path? How does violating setup time cause a functional failure?','T','I'],
+['What is a flip-flop (register)? How does the setup and hold time constraint define the maximum clock frequency for a combinational path between two registers?','T','B'],
+['What is clock domain crossing (CDC)? Why is sampling a signal from a different clock domain without synchronization dangerous and what synchronizer circuit mitigates it?','T','I'],
+['What is an FPGA? How does it implement arbitrary logic with LUTs (Look-Up Tables), flip-flops, BRAMs, and DSP blocks?','T','B'],
+['What is the difference between an ASIC and FPGA implementation of the same CPU design? Compare area, power, frequency, and NRE cost.','T','I'],
+['What is a standard cell library? What cells does it contain and how do Liberty (.lib) files specify timing, power, and area?','T','I'],
+['What is DFT (Design for Testability)? How does scan chain insertion allow manufacturing test to shift in test patterns?','T','I'],
+['What is floorplanning? How does macro placement (SRAM, IP blocks) affect timing, routing congestion, and power delivery?','T','I'],
+['Implement a 5-stage RISC-V RV32I pipeline in Verilog: IF, ID, EX, MEM, WB stages with pipeline registers. Include forwarding logic for EX-EX and MEM-EX hazards.','C','A'],
+['Synthesize your RISC-V pipeline with Yosys. Report gate count, critical path length, and the main timing bottleneck.','C','A'],
+['Implement a direct-mapped 4KB cache in Verilog: tag array, data array, valid bit. Support 32-bit read/write with 1-cycle hit and miss stall signal.','C','A'],
+['Implement your RISC-V CPU on an Arty A7 FPGA: configure UART, connect a BRAM as instruction memory, and run a blinking LED program.','C','A'],
+['Write a SystemVerilog testbench for your RISC-V pipeline: use $readmemh to load a program, drive the clock, and assert that output registers match expected values.','C','I'],
+['Synthesize a 16x16 Booth multiplier with Yosys and run timing analysis with OpenSTA. Plot achievable frequency vs synthesis effort level.','C','A'],
+['What is the difference between behavioral, RTL, and structural Verilog? Give an example of an adder described at each level.','T','B'],
+['What is linting in RTL design? What does Verilator or Spyglass catch that simulation alone misses: X-propagation, CDC, combinational loops?','T','I'],
+['What is the difference between a synchronous reset and an asynchronous reset in a flip-flop? What are the timing implications and synthesis results of each?','T','I'],
+['Design the memory subsystem for an FPGA-based RISC-V SoC: instruction BRAM, data cache with write-back, AXI4 bus to DRAM controller, and DMA engine.','T','A']
+]},
+{id:'m24',phase:3,num:'24',icon:'📡',title:'Interconnects — PCIe, CXL, CCIX & On-Die Networks',desc:'PCIe protocol layers, CXL 1/2/3, NoC topology, on-die routing, cache coherent interconnects, chiplet integration.',qs:[
+['What are the three PCIe protocol layers: physical, data link, and transaction? What does each layer add (encoding, ACK/NAK, TLP framing)?','T','I'],
+['What is a PCIe TLP (Transaction Layer Packet)? Describe the header fields for a memory read request and its completion.','T','I'],
+['What is PCIe Gen 5 vs Gen 6? Compare data rates per lane (16 GT/s vs 64 GT/s), encoding (128b/130b vs PAM4 with FLIT), and latency implications.','T','I'],
+['What is CXL (Compute Express Link)? What three protocols does it define: CXL.io (PCIe compat), CXL.cache (CPU-side device memory caching), CXL.mem (device-side memory expansion)?','T','I'],
+['What is CXL 2.0? What does it add over 1.1: switching, pooling, and persistent memory support?','T','I'],
+['What is CXL 3.0? What does peer-to-peer (device-to-device) coherency and fabric topologies enable?','T','A'],
+['What is a Network-on-Chip (NoC)? Why does a many-core processor with 100+ cores need a NoC instead of a shared bus or crossbar?','T','I'],
+['What are common NoC topologies: mesh, torus, butterfly, fat-tree? Compare latency, bisection bandwidth, and router count.','T','I'],
+['What is a chiplet? How does die-to-die interconnect (EMIB, Foveros, UCIe) enable combining chiplets from different nodes or vendors into one package?','T','I'],
+['What is UCIe (Universal Chiplet Interconnect Express)? How does it standardize the die-to-die interface to enable multi-vendor chiplet integration?','T','I'],
+['Write a PCIe TLP parser in C: given a binary trace of TLP bytes, decode the type, header, payload, and requester/completer IDs for each packet.','C','I'],
+['Write a NoC router simulator in Python: implement a 2D mesh with X-Y routing. Simulate packet injection with Poisson arrivals and measure average latency and throughput.','C','A'],
+['Write a CXL.mem latency measurement program: map a CXL memory device, time pointer-chasing with random access, and compare latency to local DRAM and remote NUMA DRAM.','C','I'],
+['Use lspci -vvv to decode the PCIe capability structures of a GPU: Link Capability, LTR, ASPM, ACS, and Resizable BAR. Interpret each field.','C','B'],
+['Write a PCIe bandwidth benchmark using DMA: map the device BAR, submit DMA descriptors for increasing transfer sizes, and plot bandwidth vs transfer size.','C','I'],
+['Implement a wormhole router for a 4x4 mesh NoC in Verilog: credit-based flow control, round-robin arbitration, and X-Y routing.','C','A'],
+['What is the difference between split-transaction and atomic transactions on a bus? How does split-transaction enable higher bus utilization at the cost of ordering complexity?','T','I'],
+['What is the AMD Infinity Fabric protocol? How does it provide cache-coherent low-latency links between CPU chiplets (CCDs) and the I/O die?','T','A'],
+['What is Intel EMIB (Embedded Multi-die Interconnect Bridge)? How does it provide a short-reach high-bandwidth die-to-die link without through-silicon vias?','T','A'],
+['Design the interconnect fabric for a 256-core server processor using chiplets: specify the NoC topology, die-to-die link type, coherence scope, and memory access latency from the furthest core.','T','A']
+]},
+{id:'m25',phase:3,num:'25',icon:'🌍',title:'ARM Architecture Deep Dive',desc:'AArch64 ISA, A/R/M profiles, exception model, EL0-EL3, GIC, system registers, TrustZone, big.LITTLE.',qs:[
+['What are the three ARM architecture profiles: A-profile (application), R-profile (real-time), M-profile (microcontroller)? What ISA features distinguish each?','T','B'],
+['What are the AArch64 exception levels EL0, EL1, EL2, EL3? What runs at each level and what can each level access?','T','B'],
+['What is an AArch64 exception (synchronous vs asynchronous)? Describe what happens when an EL0 system call fires: save state to ELR_EL1, SPSR_EL1, jump to VBAR_EL1 + offset.','T','I'],
+['What are the AArch64 system registers accessed with MRS/MSR? Name and describe: SCTLR_EL1, TCR_EL1, TTBR0_EL1, TTBR1_EL1, HCR_EL2, SCR_EL3.','T','I'],
+['What is the ARM GIC v3? Describe the distributor, redistributor, CPU interface, and how LPIs (Message Signaled Interrupts) are supported.','T','I'],
+['What is AArch64 virtual memory? Describe the two translation tables (TTBR0 for user, TTBR1 for kernel) and how TCR_EL1 configures the page table walk.','T','I'],
+['What is ARM TrustZone in AArch64? How does the SMC instruction transition from EL1 to EL3 and what is the SMC Calling Convention (SMCCC)?','T','I'],
+['What is the ARMv9 CCA (Confidential Compute Architecture)? What are Realms and the Realm Management Monitor (RMM) at EL2?','T','A'],
+['What is the difference between ARM Cortex-A78 and Cortex-X2? What microarchitecture parameters differ in decode width and ROB size?','T','A'],
+['What is the ARM AMBA AXI4 bus protocol? Describe the five channels (AW, W, B, AR, R) and the handshaking mechanism.','T','I'],
+['Write an AArch64 assembly program that enters EL1 from EL2 using ERET: set up SPSR_EL2, ELR_EL2, and jump to an EL1 routine that reads CURRENTEL.','C','A'],
+['Write an AArch64 exception handler for the synchronous exception vector (EL1 from EL0): save x0-x30, read ESR_EL1 to decode the exception class, restore and ERET.','C','A'],
+['Write AArch64 assembly demonstrating barrier instructions: ISB (sync instruction stream), DSB (drain store buffer), DMB (data memory barrier). Explain when each is needed.','C','I'],
+['Write an AArch64 program reading CNTVCT_EL0 (virtual counter) and CNTFRQ_EL0 (frequency) to implement a nanosecond timer. Benchmark against clock_gettime().','C','B'],
+['Write a bare-metal AArch64 program that configures GIC v3: enable the distributor, configure a PPI timer interrupt, and handle it in an FIQ handler at EL1.','C','A'],
+['Write an AArch64 NEON AES-128 ECB encryption using the AES crypto extension instructions (AESE, AESMC, AESIMC, AESD). Benchmark vs software AES.','C','A'],
+['What is the ARM Scalable Vector Extension (SVE)? How does the predicate register enable loop vectorization without knowing the vector length at compile time?','T','A'],
+['What is the ARM Memory Tagging Extension (MTE)? How does it tag each 16-byte allocation with a 4-bit tag to detect use-after-free and buffer overflows in hardware?','T','A'],
+['What is the ARM Branch Target Identification (BTI) extension? How does it prevent indirect branch to arbitrary code locations as a CFI mechanism?','T','I'],
+['Design a bare-metal ARM64 firmware for an embedded SoC: EL3 secure monitor (TrustZone), EL2 Type-1 hypervisor running two VMs (Linux + RTOS), and EL0 userland.','T','A']
+]},
+{id:'m26',phase:3,num:'26',icon:'🏎️',title:'x86-64 Architecture Deep Dive',desc:'Intel 64 ISA, REX prefix, segmentation legacy, protected mode, long mode, SYSCALL/SYSRET, VMX, SGX internals.',qs:[
+['What is x86 real mode vs protected mode vs long mode? How does the CPU switch from BIOS 16-bit real mode to 64-bit long mode during a modern OS boot?','T','B'],
+['What is the x86-64 REX prefix? What does each of its 4 bits (W, R, X, B) extend and give a concrete example of REX.W enabling a 64-bit register operand.','T','B'],
+['What is the legacy x86 segmentation model? What are CS, DS, ES, FS, GS, SS and which are still meaningful in 64-bit mode (FS/GS for TLS)?','T','I'],
+['What is the GDT (Global Descriptor Table)? What does each segment descriptor contain and how is it used for privilege-level transitions in protected mode?','T','I'],
+['What is the SYSCALL/SYSRET instruction pair? How does it implement a fast system call on x86-64 using MSRs to configure entry point and stack?','T','I'],
+['What is the x86 IDT (Interrupt Descriptor Table)? What does each gate descriptor contain and how does an interrupt vector invoke a handler?','T','I'],
+['What is VMX (Virtual Machine Extensions)? Describe VMXON, VMLAUNCH, VMEXIT, VMRESUME and the VMCS (Virtual Machine Control Structure).','T','I'],
+['What is the VMCS? Describe the guest state area, host state area, control fields, and exit/entry information fields.','T','I'],
+['What is EPT (Extended Page Tables)? How does it provide second-level address translation for VMs and how does an EPT violation cause a VMEXIT?','T','I'],
+['What is APIC (Advanced Programmable Interrupt Controller)? Describe the local APIC and I/O APIC roles, the ICR, and how IPIs are sent.','T','I'],
+['Write an x86-64 long-mode bootloader (Stage 2): switch from protected mode to long mode by enabling PAE, loading a PML4, setting CR3, setting LME in EFER, and far-jumping to 64-bit code.','C','A'],
+['Write an x86-64 IDT setup in C: allocate 256 gate descriptors, set the ISR address in each, load with LIDT, and write a divide-by-zero handler that prints the error and halts.','C','A'],
+['Write a minimal VMX hypervisor in C: VMXON, create a VMCS, initialize guest state (CR0, CR3, RIP, RSP), VMLAUNCH, handle VMEXITs for CPUID and HLT, then VMRESUME.','C','A'],
+['Implement FS-base TLS for a user-space thread library: use ARCH_SET_FS syscall to set FS base per thread, access thread struct via fs:0 in assembly.','C','A'],
+['Write an x86-64 assembly function using RDTSC and RDTSCP to measure the cycle count of a code section. Explain why CPUID serializing is needed.','C','B'],
+['Write a minimal x86-64 kernel that handles page faults (vector 14): set up IDT entry for #PF, install a handler that reads CR2, maps the page, and returns.','C','A'],
+['What is the x86-64 red zone? How does the 128-byte area below RSP benefit leaf functions and why must signal handlers and kernel code account for it?','T','I'],
+['What is the difference between INVLPG and CR3 reload? Which flushes a single TLB entry vs the whole TLB and when does the OS use each?','T','I'],
+['What is the x86 TSS (Task State Segment) in 64-bit mode? What is it still used for (IST - Interrupt Stack Table for NMI, double fault, machine check handlers)?','T','I'],
+['Design a minimal Type-1 hypervisor for x86-64: describe VMCS initialization for a Linux guest, EPT page table setup, VMEXIT handling for CPUID/MSR/MMIO, and multi-vCPU scheduling.','T','A']
+]},
+{id:'m27',phase:3,num:'27',icon:'🔬',title:'CPU Validation, Verification & Bugs',desc:'CPU bugs (Pentium FDIV, errata), formal verification, post-silicon validation, BIST, errata workarounds.',qs:[
+['What is the Pentium FDIV bug? What was the root cause (incorrect lookup table entry), how was it discovered, and what was the business impact?','T','B'],
+['What is a CPU erratum? How does Intel document errata in processor specification updates and how do OS/BIOS vendors apply workarounds (microcode, BIOS, compiler)?','T','I'],
+['What is formal verification of CPU designs? How does model checking with tools like JasperGold verify that a property holds for all possible inputs?','T','I'],
+['What is random instruction test generation for CPU verification? How do tools like riscv-dv generate constrained-random sequences and compare with a golden ISS?','T','I'],
+['What is a golden reference model (ISS)? How does Spike or Sail serve as the golden reference for a RISC-V RTL verification campaign?','T','I'],
+['What is co-simulation? How does RTL simulation of a pipeline run in lockstep with an ISS and compare committed instruction state cycle-by-cycle?','T','I'],
+['What is post-silicon validation? Why does it require a different approach from simulation (real electrical effects, timing margining, corner cases at frequency)?','T','I'],
+['What is BIST (Built-In Self Test)? How does it test SRAM arrays (MARCH algorithm) and logic paths on-chip without external test equipment?','T','I'],
+['What is scan test? How does a scan chain connect all flip-flops into a shift register to shift in test patterns and observe results?','T','I'],
+['What is the Spectre/Meltdown hardware fix? How did Intel modify hardware in Ice Lake and AMD in Zen 2 to prevent the microarchitectural side channels?','T','I'],
+['Write a random instruction sequence generator in Python for RV32I: generate syntactically valid instructions with random register fields and immediates. Diff ISS and RTL architectural state.','C','A'],
+['Write a property assertion in SystemVerilog for a RISC-V pipeline: assert that if a load is followed immediately by a use of the loaded register, a stall of at least 1 cycle occurs.','C','A'],
+['Write a directed test for a specific Intel or AMD erratum: reproduce the triggering sequence, apply the workaround, and verify the fix.','C','A'],
+['Write a BIST algorithm in C for a 1KB SRAM: implement the MARCH-C algorithm (write 0, read 0 write 1 forward, read 1 write 0 backward, read 0 forward). Report any failing address.','C','I'],
+['Use Verilator to simulate a RISC-V RTL design and Spike in co-simulation. Generate a random 1000-instruction workload and check that committed register state matches after every instruction.','C','A'],
+['Write a timing margin sensitivity test: push the CPU above its spec frequency in small steps until it produces incorrect results. Measure the margin.','C','A'],
+['What is the difference between a CPU bug affecting all users vs one requiring a specific triggering sequence (erratum)? Why do errata always specify a workaround?','T','I'],
+['What is the difference between an RTL simulation bug and a post-silicon bug? Give an example of each and why post-silicon bugs are harder to find and fix.','T','I'],
+['What is JTAG boundary scan (IEEE 1149.1)? How does it allow testing of PCB interconnects between chips by shifting test patterns through the boundary scan chain?','T','I'],
+['Design a verification closure plan for a new RISC-V processor: describe coverage goals, directed test suite, random test volume, formal properties, and emulation vs simulation strategy.','T','A']
+]},
+{id:'m28',phase:3,num:'28',icon:'🚀',title:'Emerging CPU Technologies',desc:'PIM, CXL memory, chiplets, 3D stacking, neuromorphic, DSAs, memory wall, wafer-scale integration.',qs:[
+['What is Processing-in-Memory (PIM)? What problem does it solve (memory wall) and how does placing compute near DRAM rows reduce data movement?','T','I'],
+['What is the Samsung HBM-PIM architecture? How does it integrate a programmable SIMD engine inside each HBM pseudo-channel?','T','A'],
+['What is a 3D-stacked die? How does TSV (Through-Silicon Via) bonding enable face-to-face stacking of compute and SRAM dies with very high die-to-die bandwidth?','T','I'],
+['What is Intel Foveros? How does it enable stacking of active dies using face-to-face bonding with micro-bumps?','T','I'],
+['What is AMD 3D V-Cache? What is the bandwidth advantage of direct SRAM stack vs off-die L3 via the ring bus?','T','I'],
+['What is a domain-specific accelerator (DSA)? How does Intel DSA (Data Streaming Accelerator) offload memory copy and scatter-gather from the CPU to a dedicated engine?','T','I'],
+['What is a neuromorphic chip (Intel Loihi, IBM TrueNorth)? How does it differ from a von Neumann CPU in compute model, memory model, and power efficiency for spike-based workloads?','T','A'],
+['What is a quantum co-processor interface? How does a classical CPU interact with a QPU via a cryogenic controller and what is the quantum instruction set?','T','A'],
+['What is a Photonic Integrated Circuit (PIC) for data center interconnect? How does silicon photonics enable 400Gb/s single-lambda links at lower power than electrical SerDes?','T','A'],
+['What is compute-near-storage? How do SmartSSDs and Computational Storage Drives (CSD) move data reduction tasks (filter, compress, encrypt) inside the storage device?','T','I'],
+['Write a benchmark quantifying the memory wall: measure GFLOPS/s and GB/s for DGEMM (compute-bound) vs random gather (memory-bound). Plot both on a roofline chart.','C','I'],
+['Write a PIM simulator in Python: model a DRAM array where each row has a simple bitwise AND operation. Compare simulated bandwidth for in-DRAM vs CPU-based filtering.','C','A'],
+['Write a CXL memory latency characterization tool: map CXL type-1 device memory, generate pointer-chase sequences with different strides, and plot latency vs stride.','C','A'],
+['Write an Intel DSA offload program: use DSA to copy a 1GB buffer in the background while the CPU computes on another dataset. Measure the overlap efficiency.','C','A'],
+['Use Intel Loihi 2 SDK (or a simulator) to implement a spiking neural network classifying MNIST digits. Compare energy per inference vs a GPU CNN implementation.','C','A'],
+['Write a heterogeneous compute scheduling policy for a system with CPU, GPU, and DSA: given a pipeline (read, filter, compute, store), assign each stage to the optimal unit.','C','A'],
+['What is the memory wall and the power wall? How do they together constrain von Neumann CPU scaling beyond 5nm nodes?','T','I'],
+['What is wafer-scale integration (Cerebras WSE)? How does eliminating die boundaries enable 900,000 cores on a single silicon wafer?','T','A'],
+['What is the difference between an NPU in a mobile SoC (Apple ANE, Qualcomm Hexagon) and a discrete GPU for AI inference? Compare TOPS/W efficiency.','T','I'],
+['Design a heterogeneous compute system for a next-generation AI training cluster: CPU type, number of GPUs per node, interconnect, memory (HBM + CXL), and power budget per rack.','T','A']
+]},
+{id:'m29',phase:3,num:'29',icon:'💡',title:'CPU Architecture Research & Frontier Topics',desc:'Research papers, BOOM, CVA6, decoupled front-ends, value prediction, runahead execution, dataflow, CHERI.',qs:[
+['What is the BOOM (Berkeley Out-of-Order Machine) RISC-V processor? What configurable parameters does it expose (fetch width, ROB size, issue width)?','T','I'],
+['What is CVA6 (formerly Ariane)? How does it differ from BOOM in terms of design philosophy (simpler 6-stage, in-order commit) and target use case?','T','I'],
+['What is a decoupled front-end? How does separating the branch predictor and fetch engine from the decode/execute engine enable larger fetch-ahead windows?','T','A'],
+['What is value prediction? How does it speculatively predict the result of a load or computation before its inputs are available, and what structures (VTAGE) are used?','T','A'],
+['What is runahead execution? How does a processor continue past a long-latency LLC miss by executing instructions in a pseudo-speculative mode to generate prefetches?','T','A'],
+['What is a dataflow processor? How does the MIT Monsoon model fire instructions as soon as their inputs are available, without a program counter?','T','A'],
+['What is EDGE (Explicit Dataflow Graph Execution)? How does the UT Austin TRIPS processor divide computation into hyperblocks that the hardware schedules on a spatial mesh?','T','A'],
+['What is an elastic pipeline? How does latency-insensitive design with handshaking (valid/ready protocol) decouple pipeline stages to handle variable-latency operations?','T','A'],
+['What is approximate computing in CPUs? How does relaxing correctness for certain computations (neural networks, multimedia) enable power savings?','T','A'],
+['What is transactional memory (HTM)? How does Intel TSX implement hardware transactions using the L1 cache as a transaction buffer?','T','A'],
+['Read the BOOM v3 paper. Summarize the microarchitecture: fetch width, decode, rename, issue queues, execution units, and L1 cache interface.','C','A'],
+['Simulate CVA6 in Verilator: run the RISC-V compliance tests, measure IPC on a benchmark, and compare with BOOM on the same benchmark.','C','A'],
+['Implement a simple value predictor in Python: use a last-value predictor for loads. Feed a memory access trace, compute prediction accuracy, and compare with stride predictor.','C','A'],
+['Implement runahead execution in a simple OOO simulator: when a cache miss stalls the ROB head, switch to runahead mode, mark results as INF, and generate prefetch requests.','C','A'],
+['Read the Intel TSX paper. Write a C++ hash map that uses TSX for lock elision. Measure performance vs mutex and vs lock-free on 16 threads.','C','A'],
+['Implement a decoupled front-end in your RISC-V pipeline simulator: separate the branch predictor into an independent unit that fills a fetch target queue 8 entries ahead of decode.','C','A'],
+['What is the RISC-V Cryptography extension (Zkne, Zknd)? How do the AES acceleration instructions map to hardware AES S-box lookup tables?','T','A'],
+['What is CHERI (Capability Hardware Enhanced RISC Instructions)? How does it add fat pointers (capability registers) to enforce memory safety in hardware?','T','A'],
+['What is the Arm Morello architecture? How does it implement CHERI capabilities on an AArch64 Neoverse N1 pipeline?','T','A'],
+['Design a novel CPU microarchitecture feature addressing one of: branch misprediction penalty, LLC miss latency, or false sharing in coherence. Write a research proposal with motivation, mechanism, and evaluation methodology.','T','A']
+]},
+{id:'m30',phase:3,num:'30',icon:'🏆',title:'CPU System Design & Interview Mastery',desc:'CPU design tradeoffs, system-level thinking, cross-cutting questions, FAANG CPU interview prep, end-to-end designs.',qs:[
+['Design a CPU for a low-power wearable at 10mW. Walk through every microarchitecture decision: pipeline depth, issue width, cache sizes, ISA choice, and DVFS policy.','T','A'],
+['Design a CPU for a 400-core HPC cluster node. Walk through: core microarchitecture, cache hierarchy, coherence protocol, interconnect, memory subsystem, and power delivery.','T','A'],
+['A CPU has IPC=2.0 at 4GHz with 30% branch misprediction rate and 10-cycle penalty. A redesign raises frequency to 5GHz but increases penalty from 10 to 18 cycles. Assume 20% branches. Is the redesign faster? Show the calculation.','T','I'],
+['A loop has a 5-cycle loop-carried dependency through an FP multiply (latency=5). The loop body has 10 other independent instructions. What is the peak achievable IPC? How many unroll iterations hide the latency?','T','I'],
+['Explain the Roofline model to a non-specialist. Given: CPU=512 GFLOPS/s, bandwidth=400 GB/s, algorithm=2 FLOPs/byte. Is it compute or memory bound? What is the achievable performance?','T','I'],
+['You see a 3x slowdown when adding a second thread to a tight loop. List 6 possible causes, describe how to diagnose each with perf, and propose the fix.','T','I'],
+['An application runs faster on an older 3GHz CPU than a newer 5GHz CPU. Explain 5 microarchitecture reasons this is possible and how you would diagnose with perf stat.','T','I'],
+['How would you design cache coherence for a 1000-core processor? Why does snooping not scale and how does directory coherence handle 1000 nodes?','T','A'],
+['Walk through what happens cycle-by-cycle from a user program calling malloc() to the first byte of memory being written: from CPU fetch to OS page fault to DRAM access.','T','I'],
+['Design a heterogeneous SoC for smartphone image processing: CPU clusters (big+LITTLE), GPU, ISP, NPU, video codec, DSP. Specify the interconnect, shared memory, and power domains.','T','A'],
+['You are the CPU architect. The chip is 3 months from tape-out and the branch predictor accuracy is 94% vs the target of 97%. What do you do? What is the performance impact and what design changes are still feasible?','T','A'],
+['A customer reports random bit flips in computation results at high ambient temperature. Walk through your diagnosis: thermal throttling vs Rowhammer vs soft errors vs hardware bug.','T','A'],
+['Explain cache-oblivious algorithms. How does a cache-oblivious matrix multiply (recursive divide-and-conquer) achieve optimal cache performance without knowing cache size at compile time?','T','A'],
+['Compare RISC-V, ARM64, and x86-64 for a new server CPU design. Evaluate: ecosystem maturity, licensing, ISA complexity tax, and performance at 5nm. Make a recommendation.','T','A'],
+['How does the processor maintain the illusion of sequential execution while executing out-of-order and speculatively? Walk through the ROB, precise exceptions, and memory ordering.','T','I'],
+['Describe the complete journey of a cache miss from an OOO processor to DRAM: MSHR allocation, L1/L2/L3 lookup, memory controller queue, DRAM scheduling, row access, data return, cache fill, and instruction wake-up.','T','A'],
+['Discuss the three-way trade-off between CPU power, frequency, and correctness margins (guardbands). How do AVS (Adaptive Voltage Scaling) and in-situ error detection reduce guardbands?','T','A'],
+['Explain memory consistency models to a software engineer writing a lock-free queue. Cover: store buffer, TSO, acquire/release, and one concrete code example.','T','I'],
+['Design the power delivery network for a 300W server CPU: voltage regulator module (VRM), on-die decoupling capacitors, package inductance, and IR drop budgeting.','T','A'],
+['A startup asks you to achieve 2x the performance-per-watt of current AMD Zen 4. What research directions would you pursue: ISA features, microarchitecture innovations, memory technology, or packaging? Justify with expected gains.','T','A']
+]},
+];
+
+const SKEY = 'cpu_mastery_v1';
+const GH_REPO = 'Srivathsan98/CPU-Mastery';
+
+const ST={};
+try{Object.assign(ST,JSON.parse(localStorage.getItem(SKEY)||'{}'));}catch(e){}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(ST));}catch(e){}}
+function k(mid,qi){return mid+'_'+qi;}
+function isChecked(mid,qi){return!!ST[k(mid,qi)];}
+function toggle(mid,qi){ST[k(mid,qi)]=!ST[k(mid,qi)];save();refreshAll(mid,qi);}
+
+function saveIssue(mid,qi,val){
+  const ik='iss_'+mid+'_'+qi;
+  if(val.trim()){ST[ik]=val.trim();}else{delete ST[ik];}
+  save();
+  const link=document.getElementById('issl-'+mid+'-'+qi);
+  if(link){
+    if(val.trim()){link.href='https://github.com/'+GH_REPO+'/issues/'+val.trim();link.className='issue-open active';}
+    else{link.href='#';link.className='issue-open';}
+  }
+}
+
+function modStats(m){let d=0;m.qs.forEach((_,i)=>{if(isChecked(m.id,i))d++;});return{done:d,total:m.qs.length};}
+function allStats(){let d=0,t=0,md=0;MODULES.forEach(m=>{const s=modStats(m);d+=s.done;t+=s.total;if(s.done===s.total&&s.total>0)md++;});return{done:d,total:t,modsDone:md};}
+
+function refreshAll(mid,qi){
+  const row=document.getElementById('row-'+mid+'-'+qi);
+  if(row){const c=isChecked(mid,qi);row.className=c?'checked':'';const cc=row.querySelector('.cb-check');if(cc)cc.style.display=c?'block':'none';}
+  const m=MODULES.find(x=>x.id===mid);
+  const s=modStats(m);const pct=s.total?Math.round(s.done/s.total*100):0;
+  const fill=document.getElementById('mfill-'+mid);if(fill)fill.style.width=pct+'%';
+  const cnt=document.getElementById('mcnt-'+mid);if(cnt)cnt.textContent=s.done+'/'+s.total;
+  const badge=document.getElementById('mbadge-'+mid);
+  if(badge){
+    if(pct===0){badge.className='mod-badge badge-ns';badge.textContent='Not started';}
+    else if(pct<100){badge.className='mod-badge badge-ip';badge.textContent=pct+'% done';}
+    else{badge.className='mod-badge badge-done';badge.textContent='Mastered \u2713';}
+  }
+  const ms=document.getElementById('ms-pct-'+mid);if(ms)ms.textContent=pct+'%';
+  const mpf=document.getElementById('ms-fill-'+mid);if(mpf)mpf.style.width=pct+'%';
+  const as=allStats();const ap=as.total?Math.round(as.done/as.total*100):0;
+  document.getElementById('done-count').textContent=as.done;
+  document.getElementById('total-count').textContent=as.total;
+  document.getElementById('pct-label').textContent=ap+'%';
+  document.getElementById('mod-done').textContent=as.modsDone;
+  document.getElementById('overall-fill').style.width=ap+'%';
+  const btn=document.getElementById('nav-'+mid);
+  if(btn)btn.className='mod-btn'+(pct===100?' done':pct>0?' partial':'');
+}
+
+let curPhase=0;
+function filterPhase(p){
+  curPhase=p;
+  document.querySelectorAll('.phase-btn').forEach((b,i)=>b.className='phase-btn'+(i===p?' active':''));
+  renderContent();
+}
+
+function renderModNav(){
+  const as=allStats();
+  document.getElementById('s-total').textContent=as.total;
+  let h='';
+  MODULES.forEach(m=>{
+    const s=modStats(m);const p=s.total?Math.round(s.done/s.total*100):0;
+    h+=`<button id="nav-${m.id}" class="mod-btn${p===100?' done':p>0?' partial':''}" onclick="jumpToModule('${m.id}')">${m.num}</button>`;
+  });
+  document.getElementById('mod-nav').innerHTML=h;
+}
+
+function jumpToModule(id){
+  const el=document.getElementById('card-'+id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});if(!el.classList.contains('open'))el.classList.add('open');}
+}
+function toggleModule(id){document.getElementById('card-'+id).classList.toggle('open');}
+
+function renderContent(){
+  const phases=curPhase===0?[1,2,3]:[curPhase];
+  const pl={1:'Phase 01 \u00b7 ISA & Microarchitecture Foundations',2:'Phase 02 \u00b7 Memory, Parallelism & Compilers',3:'Phase 03 \u00b7 Advanced, Security & Modern CPUs'};
+  const TM={'T':'theory','C':'code','D':'debug'};
+  const TC={'T':'tag-theory','C':'tag-code','D':'tag-debug'};
+  const DM={'B':'Beginner','I':'Intermediate','A':'Advanced'};
+  const DC={'B':'diff-B','I':'diff-I','A':'diff-A'};
+  let h='';
+  phases.forEach(ph=>{
+    const mods=MODULES.filter(m=>m.phase===ph);
+    h+=`<div class="phase-header">${pl[ph]} \u2014 ${mods.length} modules</div>`;
+    mods.forEach(m=>{
+      const s=modStats(m);const pct=s.total?Math.round(s.done/s.total*100):0;
+      let bc='mod-badge badge-ns',bt='Not started';
+      if(pct>0&&pct<100){bc='mod-badge badge-ip';bt=pct+'% done';}
+      else if(pct===100){bc='mod-badge badge-done';bt='Mastered \u2713';}
+      h+=`<div class="module" id="card-${m.id}"><div class="module-head" onclick="toggleModule('${m.id}')"><div class="module-num">${m.num}</div><div class="module-icon">${m.icon}</div><div class="module-info"><div class="module-title">${m.title}</div><div class="module-desc">${m.desc}</div></div><div class="module-right"><div class="mod-count" id="mcnt-${m.id}">${s.done}/${s.total}</div><div class="${bc}" id="mbadge-${m.id}">${bt}</div></div><div class="module-chevron">&#9654;</div></div><div class="mod-bar"><div class="mod-bar-fill" id="mfill-${m.id}" style="width:${pct}%"></div></div><div class="module-body"><div class="mod-stats"><div class="ms">Done: <span>${s.done}</span>/${s.total}</div><div class="ms">Progress: <span id="ms-pct-${m.id}">${pct}%</span></div><div class="mod-prog-bar"><div class="mod-prog-fill" id="ms-fill-${m.id}" style="width:${pct}%"></div></div></div><div class="q-table-wrap"><table><thead><tr><th></th><th>#</th><th>Question</th><th>Type</th><th>Difficulty</th><th>GitHub</th></tr></thead><tbody>`;
+      m.qs.forEach((q,qi)=>{
+        const c=isChecked(m.id,qi);
+        const issVal=ST['iss_'+m.id+'_'+qi]||'';
+        const typ=q[1]||'T',diff=q[2]||'I';
+        const qtext=q[0].replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        h+=`<tr id="row-${m.id}-${qi}" class="${c?'checked':''}" onclick="toggle('${m.id}',${qi})"><td><div class="cb"><span class="cb-check" style="display:${c?'block':'none'}">&#10003;</span></div></td><td class="q-num">${qi+1}</td><td class="q-text">${qtext}</td><td><span class="tag ${TC[typ]}">${TM[typ]}</span></td><td><span class="diff ${DC[diff]}">${DM[diff]}</span></td><td class="issue-cell" onclick="event.stopPropagation()"><input class="issue-input" id="iss-${m.id}-${qi}" type="text" placeholder="#" value="${issVal}" onchange="saveIssue('${m.id}',${qi},this.value)" /><a class="issue-open${issVal?' active':''}" id="issl-${m.id}-${qi}" href="${issVal?'https://github.com/'+GH_REPO+'/issues/'+issVal:'#'}" target="_blank">${issVal?'#'+issVal:'--'}</a></td></tr>`;
+      });
+      h+=`</tbody></table></div></div></div>`;
+    });
+  });
+  document.getElementById('content').innerHTML=h;
+}
+
+renderModNav();
+renderContent();
+const _as=allStats();const _ap=_as.total?Math.round(_as.done/_as.total*100):0;
+document.getElementById('done-count').textContent=_as.done;
+document.getElementById('total-count').textContent=_as.total;
+document.getElementById('pct-label').textContent=_ap+'%';
+document.getElementById('mod-done').textContent=_as.modsDone;
+document.getElementById('overall-fill').style.width=_ap+'%';
+
+</script>
+</body>
+</html>
